@@ -22,7 +22,7 @@ repository               : "ZenHue/zenhue.github.io"
 #               Additional customization can be done by editing /_includes/author-profile.html
 author:
   # Biographic information
-  avatar           : "profile.jpg"
+  avatar           : "profile.jpeg"
   name             : "Zehua Wang"
   pronouns         : # example: "she/her"  
   bio              : "Sophomore @ MIT"
