@@ -47,12 +47,12 @@ Projects
 **Consistent Local Edits in Videos via Attention Manipulation in Diffusion Models (CLEVAM-DM)**
 * Engineered CLEVAM-DM, a novel training-free framework for consistent local video editing with diffusion models
 * Designed a multi-stage pipeline integrating **BrushNet inpainting**, **DDIM inversion**, **full attention sharing**, and **PerVFI** for temporal coherence
-* [Code & Report](https://github.com/patrickwzh/CLEVAM-DM)
+* [Code & Report](https://github.com/zehuaw1/CLEVAM-DM)
 
 **Algorithm Design for the Metric k-Center Problem**
 * Authored a comprehensive survey and developed a unified evaluation framework for the metric k-center problem
 * Proposed three novel algorithms, one achieving a significant performance increase, reaching an empirical approximation ratio of **1.049** (compared to SOTA SCR's 1.064)
-* [Code & Survey](https://github.com/patrickwzh/k-Center_Evaluation)
+* [Code & Survey](https://github.com/zehuaw1/k-Center_Evaluation)
 
 **LLM-Powered Knowledge Database**
 * Initiated and led development of an AI agent-driven file-to-knowledge system using Llama 3
@@ -62,12 +62,12 @@ Projects
 **Minimal Reinforcement Learning Framework (RL-Zero)**
 * Developed a modular RL framework in Python from scratch for reproducible experimentation and fundamental understanding
 * Implemented key features like configuration-driven training, experiment tracking, and video logging
-* [Code](https://github.com/patrickwzh/RL-Zero)
+* [Code](https://github.com/zehuaw1/RL-Zero)
 
 **Centralized Visual Package Router (CVPR)**
 * Led full-stack development of Centralized Visual Package Router (CVPR), a type-safe logistics management and visualization system
 * Engineered type-safe backend in Scala and responsive frontend in TypeScript with React, emphasizing functional programming principles
-* [Code](https://github.com/patrickwzh/CVPR)
+* [Code](https://github.com/zehuaw1/CVPR)
 
 Relevant Coursework
 ======

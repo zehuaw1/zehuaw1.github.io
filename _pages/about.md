@@ -29,5 +29,5 @@ Outside of my studies, I maintain an active lifestyle and enjoy a variety of spo
 
 ## Get In Touch
 
-Feel free to explore my [CV](/cv/) (PDF version [here](https://zenhue.github.io/files/cv_zehua_wang.pdf)), check out my projects on [GitHub](https://github.com/patrickwzh), or reach out at zehuaw@mit.edu!
+Feel free to explore my [CV](/cv/) (PDF version [here](https://zehuaw1.github.io/files/cv_zehua_wang.pdf)), check out my projects on [GitHub](https://github.com/zehuaw1), or reach out at zehuaw@mit.edu!
 
