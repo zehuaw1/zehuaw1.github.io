@@ -9,6 +9,8 @@ redirect_from:
 
 {% include base_path %}
 
+[PDF version](https://zehuaw1.github.io/files/cv_zehua_wang.pdf)
+
 Education
 ======
 * **Massachusetts Institute of Technology**, Cambridge, MA
