@@ -38,6 +38,11 @@ Research Experience
 Projects
 ======
 
+**PaperPlay: Hand-drawn Sketches to Playable Games (HackMIT 2025 — 2nd Place Modal Prize)**
+* Built a system that turns hand-drawn sketches into playable games using an OpenCV pipeline, a physics engine, and real-time AI commentary
+* Implemented shape recognition, integrated Modal for backend orchestration, and built a web platform for sharing and competitive play
+* [Demo](https://demo-description.vercel.app/) · [Video](https://www.youtube.com/watch?v=QjamuTbkZdQ)
+
 **Enhancing Diffusion Models with RL and Adversarial Rewards**
 * Developed a novel framework leveraging Reinforcement Learning and adversarial discriminators to enhance pre-trained diffusion models
 * Formulated the reverse diffusion process as an MDP to optimize perceptual quality, achieving up to a **21.7% FID score reduction** compared to baseline
