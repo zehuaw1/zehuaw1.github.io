@@ -85,6 +85,6 @@ Relevant Coursework
 
 Skills
 ======
-* **Programming**: Python (PyTorch, JAX), C++
+* **Programming**: Python (PyTorch), C++
 * **Tools**: LaTeX, Git, Linux, MuJoCo, Isaac Gym/Lab
 * **Languages**: English (Fluent), Chinese (Native)
