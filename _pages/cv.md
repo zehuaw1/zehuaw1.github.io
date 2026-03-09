@@ -80,8 +80,7 @@ Projects
 Relevant Coursework
 ======
 * **ML/AI**: Symmetry & Applications to ML (6.7970/8.750), Advances in Computer Vision (6.8300), Robotic Manipulation (6.4210), Natural Language Processing (6.4610), Computer Vision (6.4300), Deep Learning (Tsinghua), Intro to Inference (6.3800), Intro to Machine Learning (6.3900)
-* **Math/Theory**: Quantum Computation (18.435), Quantum Physics II (8.05), Design & Analysis of Algorithms (6.1220), Mathematics for CS and AI (Tsinghua)
-* **Physics**: Experimental Physics I (8.13)
+* **Math/Physics**: Quantum Computation (18.435), Quantum Physics II (8.05), Experimental Physics I (8.13), Design & Analysis of Algorithms (6.1220), Mathematics for CS and AI (Tsinghua)
 
 Skills
 ======
