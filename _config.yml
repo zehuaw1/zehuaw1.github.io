@@ -158,6 +158,7 @@ analytics:
 
 # Reading Files
 include:
+  - googleb150790b49dff0be.html
   - .htaccess
   - _pages
   - files
