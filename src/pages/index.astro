@@ -72,8 +72,8 @@ try {
         )}
       </div>
     </div>
-    <div class="hero-updated">Last updated {lastUpdated}</div>
   </section>
+  <div class="hero-updated">Last updated {lastUpdated}</div>
 
   <hr class="section-divider" />
 
@@ -204,10 +204,8 @@ try {
   }
 
   .hero-updated {
-    position: absolute;
-    bottom: 1rem;
-    left: 50%;
-    transform: translateX(-50%);
+    text-align: center;
+    padding: 1rem 0;
     font-size: 0.72rem;
     font-family: var(--font-mono);
     color: var(--text-muted);

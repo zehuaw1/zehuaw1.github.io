@@ -19,7 +19,8 @@ const {
   personSchema = false,
 } = Astro.props;
 
-const pageTitle = title ? `${title} | ${siteConfig.name}` : `${siteConfig.name} — ${siteConfig.tagline}`;
+const cleanTagline = siteConfig.tagline.split('\n')[0];
+const pageTitle = title ? `${title} | ${siteConfig.name}` : `${siteConfig.name} | ${cleanTagline}`;
 const canonicalURL = new URL(Astro.url.pathname, siteConfig.url);
 const ogImage = new URL(image, siteConfig.url);
 

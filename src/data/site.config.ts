@@ -42,7 +42,7 @@ I think about AI the way a physicist would.`,
   heroTags: ['MIT', 'IPhO Gold', 'RL & Robotics'],
   shortBio:
     "I'm an undergraduate at MIT studying Physics and AI/Decision Making. My research focuses on reinforcement learning, humanoid whole-body control, and sim-to-real transfer at the FortyFive AI Lab.",
-  bio: `I'm Zehua Wang (王泽华), an undergraduate at MIT pursuing a B.S. in Physics and Artificial Intelligence & Decision Making (GPA: 5.0/5.0). My work sits at the intersection of physics and AI — from reinforcement learning for humanoid control, to diffusion models and molecular dynamics.
+  bio: `I'm Zehua Wang (<span class="zh-serif">王泽华</span>), an undergraduate at MIT pursuing a B.S. in Physics and Artificial Intelligence & Decision Making (GPA: 5.0/5.0). My work sits at the intersection of physics and AI — from reinforcement learning for humanoid control, to diffusion models and molecular dynamics.
 
 I currently work with <a href="https://people.csail.mit.edu/tommi/" target="_blank" rel="noopener noreferrer">Prof. Tommi Jaakkola</a> on diffusion models and molecular dynamics, and at the <a href="https://www.fortyfive.ai" target="_blank" rel="noopener noreferrer">FortyFive AI Lab</a> (Dr. Ge Yang) on RL and imitation learning for humanoid whole-body control and scaling laws for embodied AI.
 
