@@ -12,12 +12,12 @@ import { getSocialIcon } from '../utils/helpers';
 const featuredProjects = projects.filter((p) => p.featured).slice(0, 3);
 
 // Get last git commit date at build time
-let lastUpdated = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+let lastUpdated = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'America/New_York' });
 try {
   const { execSync } = await import('child_process');
   const gitDate = execSync('git log -1 --format=%ci', { encoding: 'utf-8' }).trim();
   if (gitDate) {
-    lastUpdated = new Date(gitDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    lastUpdated = new Date(gitDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'America/New_York' });
   }
 } catch {};
 ---
