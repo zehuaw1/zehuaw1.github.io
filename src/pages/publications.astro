@@ -1,0 +1,223 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import Badge from '../components/Badge.astro';
+import BibTexButton from '../components/BibTexButton.tsx';
+import ScrollFadeIn from '../components/ScrollFadeIn.tsx';
+import publications from '../data/publications';
+
+const typeLabel: Record<string, string> = {
+  conference: 'Conference',
+  journal: 'Journal',
+  workshop: 'Workshop',
+  preprint: 'Preprint',
+};
+
+const grouped = publications.reduce<Record<number, typeof publications>>((acc, pub) => {
+  (acc[pub.year] ??= []).push(pub);
+  return acc;
+}, {});
+
+const years = Object.keys(grouped)
+  .map(Number)
+  .sort((a, b) => b - a);
+---
+
+<BaseLayout title="Publications" description="Academic publications, conference papers, and journal articles">
+  <section class="section">
+    <div class="container">
+      <ScrollFadeIn client:visible>
+        <SectionHeading
+          title="Publications"
+          subtitle="Conference papers, journal articles, and preprints"
+        />
+      </ScrollFadeIn>
+
+      {years.map((year) => (
+        <ScrollFadeIn client:visible>
+          <div class="pub-year-section">
+            <h2 class="pub-year-heading">{year}</h2>
+            <div class="pub-list">
+              {grouped[year].map((pub) => (
+                <article class={`pub-item ${pub.highlight ? 'pub-highlight' : ''}`}>
+                  <div class="pub-meta">
+                    <Badge label={pub.venue} variant="accent" />
+                    <Badge label={typeLabel[pub.type]} variant="muted" />
+                  </div>
+                  <h3 class="pub-title">{pub.title}</h3>
+                  <p class="pub-authors">
+                    {pub.authors.map((author, i) => (
+                      <>
+                        <span class={author === 'Alex Chen' ? 'author-self' : ''}>
+                          {author}
+                        </span>
+                        {i < pub.authors.length - 1 ? ', ' : ''}
+                      </>
+                    ))}
+                  </p>
+                  <p class="pub-abstract">{pub.abstract}</p>
+
+                  <div class="pub-actions">
+                    <div class="pub-links">
+                      {pub.links.paper && (
+                        <a href={pub.links.paper} class="pub-link" target="_blank" rel="noopener noreferrer">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                          </svg>
+                          Paper
+                        </a>
+                      )}
+                      {pub.links.code && (
+                        <a href={pub.links.code} class="pub-link" target="_blank" rel="noopener noreferrer">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                          </svg>
+                          Code
+                        </a>
+                      )}
+                      {pub.links.project && (
+                        <a href={pub.links.project} class="pub-link">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9" />
+                          </svg>
+                          Project
+                        </a>
+                      )}
+                      {pub.links.video && (
+                        <a href={pub.links.video} class="pub-link" target="_blank" rel="noopener noreferrer">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          Video
+                        </a>
+                      )}
+                    </div>
+                    <BibTexButton client:visible bibtex={pub.bibtex} />
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+        </ScrollFadeIn>
+      ))}
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .container {
+    max-width: 52rem;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .pub-year-section {
+    margin-bottom: 3rem;
+  }
+
+  .pub-year-heading {
+    font-size: 1.4rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: var(--text-primary);
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .pub-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .pub-item {
+    padding: 1.5rem;
+    border-radius: 8px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    box-shadow: var(--card-shadow);
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+  }
+
+  .pub-item:hover {
+    box-shadow: var(--card-shadow-hover);
+    transform: translateY(-1px);
+  }
+
+  .pub-highlight {
+    border-left: 3px solid var(--accent);
+  }
+
+  .pub-meta {
+    display: flex;
+    gap: 0.4rem;
+    margin-bottom: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .pub-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+    line-height: 1.4;
+    margin: 0 0 0.5rem;
+  }
+
+  .pub-authors {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin: 0 0 0.75rem;
+    line-height: 1.5;
+  }
+
+  .author-self {
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .pub-abstract {
+    font-size: 0.84rem;
+    color: var(--text-muted);
+    line-height: 1.65;
+    margin: 0 0 1rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .pub-actions {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .pub-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .pub-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 4px;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    text-decoration: none;
+    transition: color 0.15s, border-color 0.15s;
+  }
+
+  .pub-link:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+</style>

@@ -1,0 +1,43 @@
+---
+interface Props {
+  label: string;
+  variant?: 'default' | 'accent' | 'muted' | 'success';
+}
+
+const { label, variant = 'default' } = Astro.props;
+---
+
+<span class={`badge badge-${variant}`}>{label}</span>
+
+<style>
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.15rem 0.5rem;
+    border-radius: 3px;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+  }
+
+  .badge-default {
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+  }
+
+  .badge-accent {
+    background: var(--accent-subtle);
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .badge-muted {
+    color: var(--text-muted);
+  }
+
+  .badge-success {
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+</style>

@@ -1,0 +1,80 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SectionHeading from '../../components/SectionHeading.astro';
+import ScrollFadeIn from '../../components/ScrollFadeIn.tsx';
+---
+
+<BaseLayout title="Blog" description="Thoughts on research, robotics, and reinforcement learning">
+  <section class="section">
+    <div class="container">
+      <ScrollFadeIn client:visible>
+        <SectionHeading
+          title="Blog"
+          subtitle="Thoughts on research, robotics, and reinforcement learning"
+        />
+      </ScrollFadeIn>
+
+      <ScrollFadeIn client:visible delay={0.1}>
+        <div class="empty-state">
+          <div class="empty-icon" aria-hidden="true">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"></path>
+              <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+            </svg>
+          </div>
+          <h2 class="empty-title">Coming Soon</h2>
+          <p class="empty-text">
+            Blog posts about research insights, paper breakdowns, and technical deep-dives
+            are on the way. Check back soon!
+          </p>
+          <a href="/" class="back-link">← Back to Home</a>
+        </div>
+      </ScrollFadeIn>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .container {
+    max-width: 52rem;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 4rem 1rem;
+    max-width: 28rem;
+    margin: 0 auto;
+  }
+
+  .empty-icon {
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+    opacity: 0.5;
+  }
+
+  .empty-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+  }
+
+  .empty-text {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-bottom: 2rem;
+  }
+
+  .back-link {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .back-link:hover {
+    opacity: 0.8;
+  }
+</style>

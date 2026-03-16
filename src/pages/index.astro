@@ -1,0 +1,436 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import HeroAnimation from '../components/HeroAnimation.tsx';
+import ScrollFadeIn from '../components/ScrollFadeIn.tsx';
+import StickyAvatar from '../components/StickyAvatar.tsx';
+import siteConfig from '../data/site.config';
+import projects from '../data/projects';
+import { getSocialIcon } from '../utils/helpers';
+
+const featuredProjects = projects.filter((p) => p.featured).slice(0, 3);
+
+// Get last git commit date at build time
+let lastUpdated = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+try {
+  const { execSync } = await import('child_process');
+  const gitDate = execSync('git log -1 --format=%ci', { encoding: 'utf-8' }).trim();
+  if (gitDate) {
+    lastUpdated = new Date(gitDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  }
+} catch {};
+---
+
+<BaseLayout personSchema={true}>
+  <section class="hero-section">
+    <div class="hero-container">
+      <div class="hero-layout">
+        <div class="hero-content">
+          <HeroAnimation
+            client:load
+            name={siteConfig.name}
+            tagline={siteConfig.tagline}
+            highlightWords={siteConfig.highlightWords}
+            tags={siteConfig.heroTags}
+          />
+
+          <div class="hero-actions">
+            <a href="#about" class="hero-link">
+              About me
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
+            </a>
+            <a href="/cv" class="hero-link">CV</a>
+          </div>
+
+          <div class="hero-socials">
+            {siteConfig.socials.map((social) => (
+              <a
+                href={social.url}
+                aria-label={social.label}
+                class="hero-social-link"
+                target={social.url.startsWith('mailto:') ? undefined : '_blank'}
+                rel={social.url.startsWith('mailto:') ? undefined : 'noopener noreferrer'}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d={getSocialIcon(social.platform)} />
+                </svg>
+              </a>
+            ))}
+          </div>
+        </div>
+
+        {siteConfig.profileImage && (
+          <div class="hero-pfp">
+            <img
+              src={siteConfig.profileImage}
+              alt={siteConfig.name}
+              class="hero-pfp-img"
+              loading="eager"
+            />
+          </div>
+        )}
+      </div>
+    </div>
+    <div class="hero-updated">Last updated {lastUpdated}</div>
+  </section>
+
+  <hr class="section-divider" />
+
+  <section class="section" id="about">
+    <div class="container">
+      <ScrollFadeIn client:visible>
+        <SectionHeading title="About" />
+      </ScrollFadeIn>
+      <ScrollFadeIn client:visible delay={0.1}>
+        <div class="about-full">
+          <div class="about-bio prose-content">
+            {siteConfig.bio.split('\n\n').map((paragraph) => (
+              <p set:html={paragraph.trim()} />
+            ))}
+          </div>
+        </div>
+      </ScrollFadeIn>
+      <ScrollFadeIn client:visible delay={0.15}>
+        <div class="about-interests-section">
+          <h3 class="subsection-title">Research Interests</h3>
+          <div class="interests-grid">
+            {siteConfig.researchInterests.map((interest) => (
+              <div class="interest-card">
+                <span class="interest-text">{interest}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </ScrollFadeIn>
+      {siteConfig.beyondAcademics && (
+        <ScrollFadeIn client:visible delay={0.2}>
+          <div class="about-beyond">
+            <h3 class="subsection-title">Beyond Research</h3>
+            <div class="prose-content">
+              {siteConfig.beyondAcademics.split('\n').map((line) => (
+                <p>{line.trim()}</p>
+              ))}
+            </div>
+          </div>
+        </ScrollFadeIn>
+      )}
+      <ScrollFadeIn client:visible delay={0.25}>
+        <div class="about-contact">
+          <p class="prose-content">I'm always happy to chat — whether it's about research, physics, AI, or anything else. If something here caught your interest, feel free to <a href={`mailto:${siteConfig.email}`}>reach out</a>.</p>
+        </div>
+      </ScrollFadeIn>
+    </div>
+  </section>
+
+
+  <hr class="section-divider" />
+
+  <section class="section">
+    <div class="container">
+      <ScrollFadeIn client:visible>
+        <SectionHeading
+          title="Featured Projects"
+          subtitle="Selected research projects and open-source work"
+        />
+      </ScrollFadeIn>
+      <div class="projects-grid">
+        {featuredProjects.map((project, i) => (
+          <ScrollFadeIn client:visible delay={i * 0.1}>
+            <ProjectCard project={project} />
+          </ScrollFadeIn>
+        ))}
+      </div>
+      <ScrollFadeIn client:visible>
+        <div class="section-cta">
+          <a href="/projects" class="text-link">View all projects →</a>
+        </div>
+      </ScrollFadeIn>
+    </div>
+  </section>
+
+  <hr class="section-divider" />
+
+  <section class="section">
+    <div class="container">
+      <ScrollFadeIn client:visible>
+        <SectionHeading title="News" subtitle="Recent updates and announcements" />
+      </ScrollFadeIn>
+      <div class="news-list">
+        {siteConfig.news.map((item, i) => (
+          <ScrollFadeIn client:visible delay={i * 0.08}>
+            <div class="news-item">
+              <span class="news-date">{item.date}</span>
+              <p class="news-text">
+                {item.link ? (
+                  <a href={item.link}>{item.text}</a>
+                ) : (
+                  item.text
+                )}
+              </p>
+            </div>
+          </ScrollFadeIn>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <div class="last-updated">
+    Last updated {lastUpdated}
+  </div>
+</BaseLayout>
+
+<style>
+  .hero-section {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 6rem 0 3rem;
+    position: relative;
+  }
+
+  @media (min-width: 768px) {
+    .hero-section {
+      padding: 8rem 0 4rem;
+    }
+  }
+
+  .hero-container {
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    width: 100%;
+    position: relative;
+  }
+
+  .hero-updated {
+    position: absolute;
+    bottom: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.72rem;
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+    opacity: 0.6;
+  }
+
+  .hero-layout {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4rem;
+  }
+
+  .hero-content {
+    max-width: 48rem;
+    flex: 1;
+  }
+
+  .hero-pfp {
+    flex-shrink: 0;
+    display: none;
+  }
+
+  @media (min-width: 768px) {
+    .hero-pfp {
+      display: block;
+    }
+  }
+
+  .hero-pfp-img {
+    width: 360px;
+    height: 360px;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
+    border: 3px solid var(--bg);
+    outline: 1px solid var(--border);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .hero-pfp-img:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.16), 0 6px 16px rgba(0, 0, 0, 0.08);
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 2.5rem;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .hero-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+
+  .hero-link:hover {
+    color: var(--text-primary);
+  }
+
+  .hero-socials {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2.5rem;
+  }
+
+  .hero-social-link {
+    color: var(--text-muted);
+    transition: color 0.15s;
+    text-decoration: none;
+  }
+
+  .hero-social-link:hover {
+    color: var(--text-primary);
+  }
+
+  .container {
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .about-full {
+    max-width: 48rem;
+  }
+
+  .about-bio {
+    margin-bottom: 2.5rem;
+  }
+
+  .about-interests-section {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .subsection-title {
+    font-size: 0.88rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 1rem;
+    color: var(--text-muted);
+  }
+
+  .interests-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 0.5rem;
+  }
+
+  .interest-card {
+    padding: 0.65rem 1rem;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+  }
+
+  .interest-card:hover {
+    box-shadow: var(--card-shadow-hover);
+    transform: translateY(-1px);
+  }
+
+  .interest-text {
+    font-size: 1.05rem;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+
+  .about-beyond {
+    margin-top: 2rem;
+  }
+
+  .about-contact {
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-subtle);
+  }
+
+  .about-contact p {
+    font-style: italic;
+    color: var(--text-muted);
+  }
+
+  .text-link {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+
+  .text-link:hover {
+    color: var(--text-primary);
+  }
+
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.25rem;
+  }
+
+  .section-cta {
+    margin-top: 2.5rem;
+    text-align: center;
+  }
+
+  .news-list {
+    max-width: 48rem;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .news-item {
+    display: flex;
+    gap: 1.25rem;
+    padding: 0.85rem 0;
+    border-bottom: 1px solid var(--border-subtle);
+    align-items: baseline;
+  }
+
+  .news-item:last-child {
+    border-bottom: none;
+  }
+
+  .news-date {
+    font-size: 0.78rem;
+    font-weight: 500;
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .news-text {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .news-text a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+
+  .news-text a:hover {
+    color: var(--text-primary);
+  }
+
+  .last-updated {
+    text-align: center;
+    padding: 2rem 1.5rem 0;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+  }
+</style>

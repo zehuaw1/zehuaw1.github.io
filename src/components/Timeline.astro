@@ -1,0 +1,183 @@
+---
+interface TimelineItem {
+  title: string;
+  organization: string;
+  period: string;
+  description?: string;
+  bullets?: string[];
+  location?: string;
+  badge?: string;
+}
+
+interface Props {
+  items: TimelineItem[];
+}
+
+const { items } = Astro.props;
+---
+
+<ol class="timeline" role="list">
+  {items.map((item) => (
+    <li class="timeline-entry">
+      <div class="timeline-dot" aria-hidden="true"></div>
+      <div class="timeline-connector" aria-hidden="true"></div>
+
+      <div class="timeline-content">
+        <div class="timeline-header">
+          <div class="timeline-meta">
+            <span class="timeline-period">{item.period}</span>
+            {item.location && (
+              <span class="timeline-location">{item.location}</span>
+            )}
+          </div>
+          {item.badge && (
+            <span class="timeline-badge">{item.badge}</span>
+          )}
+        </div>
+
+        <h3 class="timeline-title">{item.title}</h3>
+        <p class="timeline-org">{item.organization}</p>
+
+        {item.description && (
+          <p class="timeline-description">{item.description}</p>
+        )}
+
+        {item.bullets && item.bullets.length > 0 && (
+          <ul class="timeline-bullets" role="list">
+            {item.bullets.map((bullet) => (
+              <li>{bullet}</li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </li>
+  ))}
+</ol>
+
+<style>
+  .timeline {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    position: relative;
+  }
+
+  .timeline-entry {
+    position: relative;
+    padding-left: 2rem;
+    padding-bottom: 2.5rem;
+  }
+
+  .timeline-entry:last-child {
+    padding-bottom: 0;
+  }
+
+  .timeline-dot {
+    position: absolute;
+    left: 0;
+    top: 6px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--text-muted);
+    z-index: 1;
+  }
+
+  .timeline-connector {
+    position: absolute;
+    left: 2.5px;
+    top: 16px;
+    bottom: 0;
+    width: 1px;
+    background: var(--border);
+  }
+
+  .timeline-entry:last-child .timeline-connector {
+    display: none;
+  }
+
+  .timeline-content {
+    padding-left: 0.75rem;
+  }
+
+  .timeline-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.3rem;
+  }
+
+  .timeline-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+  }
+
+  .timeline-period {
+    font-size: 0.78rem;
+    font-weight: 500;
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+  }
+
+  .timeline-location {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+  }
+
+  .timeline-badge {
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  .timeline-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+    margin: 0 0 0.15rem;
+  }
+
+  .timeline-org {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin: 0 0 0.6rem;
+  }
+
+  .timeline-description {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.65;
+    margin: 0 0 0.6rem;
+  }
+
+  .timeline-bullets {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .timeline-bullets li {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    padding-left: 1rem;
+    position: relative;
+  }
+
+  .timeline-bullets li::before {
+    content: '–';
+    position: absolute;
+    left: 0;
+    color: var(--text-muted);
+  }
+</style>

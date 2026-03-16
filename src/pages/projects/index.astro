@@ -1,0 +1,31 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SectionHeading from '../../components/SectionHeading.astro';
+import ProjectFilter from '../../components/ProjectFilter.tsx';
+import ScrollFadeIn from '../../components/ScrollFadeIn.tsx';
+import projects from '../../data/projects';
+---
+
+<BaseLayout title="Projects" description="Research projects and open-source work">
+  <section class="section">
+    <div class="container">
+      <ScrollFadeIn client:visible>
+        <SectionHeading
+          title="Projects"
+          subtitle="Research projects, open-source tools, and experimental work"
+        />
+      </ScrollFadeIn>
+      <ScrollFadeIn client:visible delay={0.1}>
+        <ProjectFilter client:load projects={projects} />
+      </ScrollFadeIn>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .container {
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+</style>

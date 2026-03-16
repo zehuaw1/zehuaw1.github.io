@@ -1,0 +1,203 @@
+---
+import siteConfig from '../data/site.config';
+import { getSocialIcon } from '../utils/helpers';
+
+const year = new Date().getFullYear();
+
+let lastUpdated = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+try {
+  const { execSync } = await import('child_process');
+  const gitDate = execSync('git log -1 --format=%ci', { encoding: 'utf-8' }).trim();
+  if (gitDate) {
+    lastUpdated = new Date(gitDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  }
+} catch {};
+---
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="/" class="footer-name">{siteConfig.name}</a>
+        <p class="footer-tagline" set:html={siteConfig.tagline.replace(/\n/g, '<br/>')} />
+      </div>
+
+      <nav class="footer-nav" aria-label="Footer navigation">
+        <p class="footer-nav-label">Pages</p>
+        <ul role="list">
+          <li><a href="/">Home</a></li>
+          <li><a href="/#about">About</a></li>
+          <li><a href="/projects">Projects</a></li>
+          <li><a href="/cv">CV</a></li>
+        </ul>
+      </nav>
+
+      <div class="footer-socials">
+        <p class="footer-contact-label">Get in touch</p>
+        <a href={`mailto:${siteConfig.email}`} class="footer-email">{siteConfig.email}</a>
+        <div class="social-icons">
+          {siteConfig.socials.map((social) => (
+            <a
+              href={social.url}
+              aria-label={social.label}
+              class="social-icon"
+              target={social.url.startsWith('mailto:') ? undefined : '_blank'}
+              rel={social.url.startsWith('mailto:') ? undefined : 'noopener noreferrer'}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d={getSocialIcon(social.platform)} />
+              </svg>
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>&copy; {year} {siteConfig.name}. Last updated {lastUpdated}.</p>
+      <p>
+        <a href={siteConfig.cvUrl} target="_blank" rel="noopener noreferrer">Download CV</a>
+        <span class="separator" aria-hidden="true">&middot;</span>
+        <a href={`mailto:${siteConfig.email}`}>Contact</a>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    border-top: 1px solid var(--border);
+    background: var(--bg-secondary);
+    margin-top: 2rem;
+  }
+
+  .footer-inner {
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: 3rem 1.5rem 2rem;
+  }
+
+  .footer-top {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  @media (min-width: 768px) {
+    .footer-top {
+      grid-template-columns: 1.5fr 1fr 1.5fr;
+    }
+  }
+
+  .footer-name {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    text-decoration: none;
+    letter-spacing: -0.02em;
+  }
+
+  .footer-name:hover {
+    opacity: 0.7;
+  }
+
+  .footer-tagline {
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  .footer-nav-label,
+  .footer-contact-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+  }
+
+  .footer-nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .footer-nav a {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+
+  .footer-nav a:hover {
+    color: var(--text-primary);
+  }
+
+  .footer-email {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    text-decoration: none;
+    display: block;
+    margin-bottom: 1rem;
+  }
+
+  .footer-email:hover {
+    color: var(--text-primary);
+  }
+
+  .social-icons {
+    display: flex;
+    gap: 0.75rem;
+  }
+
+  .social-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+
+  .social-icon:hover {
+    color: var(--text-primary);
+  }
+
+  .footer-bottom {
+    padding-top: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .footer-bottom p {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .footer-bottom a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+
+  .footer-bottom a:hover {
+    color: var(--text-primary);
+  }
+
+  .separator {
+    color: var(--border);
+  }
+</style>

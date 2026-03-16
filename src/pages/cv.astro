@@ -1,0 +1,312 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import Timeline from '../components/Timeline.astro';
+import Badge from '../components/Badge.astro';
+import ScrollFadeIn from '../components/ScrollFadeIn.tsx';
+import siteConfig from '../data/site.config';
+import education from '../data/education';
+import experience from '../data/experience';
+import awards from '../data/awards';
+import skills from '../data/skills';
+import courses from '../data/courses';
+
+const educationItems = education.map((e) => ({
+  title: `${e.degree} in ${e.field}`,
+  organization: e.institution,
+  period: `${e.startYear} – ${e.endYear === 'present' ? 'Present' : e.endYear}`,
+  location: e.location,
+  badge: e.gpa ? `GPA: ${e.gpa}` : undefined,
+  description: e.advisor ? `Advisor: ${e.advisor}` : undefined,
+  bullets: e.notes,
+}));
+
+const experienceItems = experience.map((e) => ({
+  title: e.role,
+  organization: e.organization,
+  period: `${e.startDate} – ${e.endDate}`,
+  location: e.location,
+  description: e.description,
+  bullets: e.bullets,
+}));
+
+const levelColor: Record<string, 'accent' | 'default' | 'muted'> = {
+  expert: 'accent',
+  proficient: 'default',
+  familiar: 'muted',
+};
+---
+
+<BaseLayout title="CV" description={`Curriculum Vitae — ${siteConfig.name}`}>
+  <section class="section">
+    <div class="container">
+      <ScrollFadeIn client:visible>
+        <div class="cv-header">
+          <SectionHeading title="Curriculum Vitae" />
+          <a href={siteConfig.cvUrl} class="cv-download" target="_blank" rel="noopener noreferrer">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            Download PDF
+          </a>
+        </div>
+      </ScrollFadeIn>
+
+      <ScrollFadeIn client:visible>
+        <div class="cv-section">
+          <h2 class="cv-section-title">Education</h2>
+          <Timeline items={educationItems} />
+        </div>
+      </ScrollFadeIn>
+
+      <ScrollFadeIn client:visible>
+        <div class="cv-section">
+          <h2 class="cv-section-title">Experience</h2>
+          <Timeline items={experienceItems} />
+        </div>
+      </ScrollFadeIn>
+
+      <ScrollFadeIn client:visible>
+        <div class="cv-section">
+          <h2 class="cv-section-title">Awards & Honors</h2>
+          <div class="awards-list">
+            {awards.map((award) => (
+              <div class={`award-item ${award.highlight ? 'award-highlight' : ''}`}>
+                <div class="award-header">
+                  <span class="award-year">{award.year}</span>
+                  <h3 class="award-title">{award.title}</h3>
+                </div>
+                <p class="award-org">{award.organization}</p>
+                {award.description && (
+                  <p class="award-desc">{award.description}</p>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </ScrollFadeIn>
+
+      <ScrollFadeIn client:visible>
+        <div class="cv-section">
+          <h2 class="cv-section-title">Skills</h2>
+          <div class="skills-grid">
+            {skills.map((cat) => (
+              <div class="skill-category">
+                <h3 class="skill-cat-title">{cat.category}</h3>
+                <div class="skill-tags">
+                  {cat.skills.map((skill) => (
+                    <Badge label={skill.name} variant={levelColor[skill.level ?? 'familiar']} />
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </ScrollFadeIn>
+
+      <ScrollFadeIn client:visible>
+        <div class="cv-section">
+          <h2 class="cv-section-title">Selected Coursework</h2>
+          <div class="courses-grid">
+            {courses.map((cat) => (
+              <div class="course-category">
+                <h3 class="course-cat-title">{cat.category}</h3>
+                <ul class="course-list">
+                  {cat.courses.map((course) => (
+                    <li>
+                      <span class="course-code">{course.code}</span>
+                      <span class="course-title">{course.title}</span>
+                      <span class="course-inst">{course.institution}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+      </ScrollFadeIn>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .container {
+    max-width: 52rem;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .cv-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .cv-download {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    background: var(--accent);
+    color: #ffffff;
+    text-decoration: none;
+    transition: opacity 0.15s;
+    flex-shrink: 0;
+  }
+
+  .cv-download:hover {
+    opacity: 0.85;
+    color: #ffffff;
+  }
+
+  .cv-section {
+    margin-bottom: 3.5rem;
+  }
+
+  .cv-section-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 1.5rem;
+    padding-left: 0.75rem;
+    border-left: 3px solid var(--accent);
+    color: var(--text-primary);
+  }
+
+  .awards-list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .award-item {
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .award-item:last-child {
+    border-bottom: none;
+  }
+
+  .award-highlight {
+    padding: 1rem;
+    background: var(--accent-subtle);
+    border-radius: 6px;
+    border-bottom: none;
+    margin-bottom: 0.5rem;
+  }
+
+  .award-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .award-year {
+    font-size: 0.72rem;
+    font-weight: 500;
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+    flex-shrink: 0;
+  }
+
+  .award-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+  }
+
+  .award-org {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin: 0 0 0.25rem;
+    padding-left: 3.5rem;
+  }
+
+  .award-desc {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin: 0;
+    padding-left: 3.5rem;
+    line-height: 1.5;
+  }
+
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .skill-cat-title {
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+  }
+
+  .skill-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+  }
+
+  .courses-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2rem;
+  }
+
+  .course-cat-title {
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+  }
+
+  .course-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .course-list li {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .course-code {
+    font-size: 0.75rem;
+    font-weight: 600;
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  .course-title {
+    font-size: 0.85rem;
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+
+  .course-inst {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+  }
+</style>
