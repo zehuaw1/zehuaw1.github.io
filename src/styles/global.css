@@ -15,10 +15,10 @@
   --text-primary: #111111;
   --text-secondary: #333333;
   --text-muted: #777777;
-  --accent: #2563eb;
-  --accent-hover: #1d4ed8;
-  --accent-light: #eff6ff;
-  --accent-subtle: rgba(37, 99, 235, 0.08);
+  --accent: #da7756;
+  --accent-hover: #c4613f;
+  --accent-light: #fdf2ee;
+  --accent-subtle: rgba(218, 119, 86, 0.08);
   --card-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
   --card-shadow-hover: 0 8px 25px rgba(0,0,0,0.1), 0 4px 10px rgba(0,0,0,0.06);
 }
