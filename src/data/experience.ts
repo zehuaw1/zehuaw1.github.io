@@ -10,6 +10,16 @@ export interface Experience {
 
 const experience: Experience[] = [
   {
+    role: 'Software Engineering Intern',
+    organization: 'Hudson River Trading',
+    startDate: 'May 2026',
+    endDate: 'Aug 2026',
+    location: 'New York, NY',
+    bullets: [
+      'Two rotations: Software Engineering (5 weeks) and Algorithmic Trading (5 weeks).',
+    ],
+  },
+  {
     role: 'Undergraduate Researcher — Diffusion Models & Molecular Dynamics',
     organization: 'MIT, supervised by Prof. Tommi Jaakkola',
     startDate: 'Feb 2026',
