@@ -28,10 +28,8 @@ const { title, subtitle, align = 'left', class: className = '' } = Astro.props;
     font-weight: 700;
     color: var(--text-primary);
     letter-spacing: -0.03em;
+    line-height: 1.1;
     margin-bottom: 0.5rem;
-    display: inline-block;
-    border-bottom: 2px solid var(--accent);
-    padding-bottom: 0.25rem;
   }
 
   .heading-subtitle {
@@ -39,7 +37,7 @@ const { title, subtitle, align = 'left', class: className = '' } = Astro.props;
     color: var(--text-muted);
     line-height: 1.6;
     max-width: 56ch;
-    margin-top: 0.25rem;
+    margin-top: 0.5rem;
   }
 
   .heading-center .heading-subtitle {

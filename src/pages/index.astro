@@ -2,14 +2,15 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SectionHeading from '../components/SectionHeading.astro';
 import ProjectCard from '../components/ProjectCard.astro';
+import FeaturedLead from '../components/FeaturedLead.astro';
 import HeroAnimation from '../components/HeroAnimation.tsx';
 import ScrollFadeIn from '../components/ScrollFadeIn.tsx';
-import StickyAvatar from '../components/StickyAvatar.tsx';
 import siteConfig from '../data/site.config';
 import projects from '../data/projects';
 import { getSocialIcon } from '../utils/helpers';
 
 const featuredProjects = projects.filter((p) => p.featured).slice(0, 3);
+const [leadProject, ...followerProjects] = featuredProjects;
 
 // Get last git commit date at build time
 let lastUpdated = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'America/New_York' });
@@ -73,7 +74,6 @@ try {
       </div>
     </div>
   </section>
-  <div class="hero-updated">Last updated {lastUpdated}</div>
 
   <hr class="section-divider" />
 
@@ -94,13 +94,16 @@ try {
       <ScrollFadeIn client:visible delay={0.15}>
         <div class="about-interests-section">
           <h3 class="subsection-title">Research Interests</h3>
-          <div class="interests-grid">
-            {siteConfig.researchInterests.map((interest) => (
-              <div class="interest-card">
-                <span class="interest-text">{interest}</span>
-              </div>
+          <p class="interests-line">
+            {siteConfig.researchInterests.map((interest, i) => (
+              <>
+                <span class="interest-item">{interest}</span>
+                {i < siteConfig.researchInterests.length - 1 && (
+                  <span class="interest-sep" aria-hidden="true"> · </span>
+                )}
+              </>
             ))}
-          </div>
+          </p>
         </div>
       </ScrollFadeIn>
       {siteConfig.beyondAcademics && (
@@ -117,7 +120,7 @@ try {
       )}
       <ScrollFadeIn client:visible delay={0.25}>
         <div class="about-contact">
-          <p class="prose-content">I'm always happy to chat — whether it's about research, physics, AI, or anything else. If something here caught your interest, feel free to <a href={`mailto:${siteConfig.email}`}>reach out</a>.</p>
+          <p class="prose-content">I'm always happy to chat, whether it's about research, physics, AI, or anything else. If something here caught your interest, feel free to <a href={`mailto:${siteConfig.email}`}>reach out</a>.</p>
         </div>
       </ScrollFadeIn>
     </div>
@@ -134,12 +137,21 @@ try {
           subtitle="Selected research projects and open-source work"
         />
       </ScrollFadeIn>
-      <div class="projects-grid">
-        {featuredProjects.map((project, i) => (
-          <ScrollFadeIn client:visible delay={i * 0.1}>
-            <ProjectCard project={project} />
+      <div class="featured-stack">
+        {leadProject && (
+          <ScrollFadeIn client:visible>
+            <FeaturedLead project={leadProject} />
           </ScrollFadeIn>
-        ))}
+        )}
+        {followerProjects.length > 0 && (
+          <div class="followers-grid">
+            {followerProjects.map((project, i) => (
+              <ScrollFadeIn client:visible delay={(i + 1) * 0.08}>
+                <ProjectCard project={project} />
+              </ScrollFadeIn>
+            ))}
+          </div>
+        )}
       </div>
       <ScrollFadeIn client:visible>
         <div class="section-cta">
@@ -203,15 +215,6 @@ try {
     position: relative;
   }
 
-  .hero-updated {
-    text-align: center;
-    padding: 1rem 0;
-    font-size: 0.72rem;
-    font-family: var(--font-mono);
-    color: var(--text-muted);
-    opacity: 0.6;
-  }
-
   .hero-layout {
     display: flex;
     align-items: center;
@@ -240,7 +243,7 @@ try {
     height: 360px;
     border-radius: 50%;
     object-fit: cover;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 8px 30px oklch(15% 0.01 35 / 0.12), 0 2px 8px oklch(15% 0.01 35 / 0.06);
     border: 3px solid var(--bg);
     outline: 1px solid var(--border);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -248,7 +251,7 @@ try {
 
   .hero-pfp-img:hover {
     transform: translateY(-6px);
-    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.16), 0 6px 16px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 16px 40px oklch(15% 0.01 35 / 0.16), 0 6px 16px oklch(15% 0.01 35 / 0.08);
   }
 
   .hero-actions {
@@ -318,28 +321,22 @@ try {
     color: var(--text-muted);
   }
 
-  .interests-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 0.5rem;
-  }
-
-  .interest-card {
-    padding: 0.65rem 1rem;
-    border-radius: 6px;
-    border: 1px solid var(--border);
-    transition: box-shadow 0.2s ease, transform 0.2s ease;
-  }
-
-  .interest-card:hover {
-    box-shadow: var(--card-shadow-hover);
-    transform: translateY(-1px);
-  }
-
-  .interest-text {
+  .interests-line {
     font-size: 1.05rem;
-    font-weight: 500;
+    line-height: 1.7;
     color: var(--text-primary);
+    margin: 0;
+    max-width: 56ch;
+  }
+
+  .interest-item {
+    font-weight: 500;
+  }
+
+  .interest-sep {
+    color: var(--text-muted);
+    font-weight: 400;
+    margin: 0 0.15em;
   }
 
   .about-beyond {
@@ -369,7 +366,13 @@ try {
     color: var(--text-primary);
   }
 
-  .projects-grid {
+  .featured-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .followers-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 1.25rem;

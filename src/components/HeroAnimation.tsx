@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 
 interface HeroAnimationProps {
   name: string;
@@ -7,44 +7,70 @@ interface HeroAnimationProps {
   tags: string[];
 }
 
+const EASE_OUT_QUINT: [number, number, number, number] = [0.22, 1, 0.36, 1];
+
 export default function HeroAnimation({ name, tagline, highlightWords = [] }: HeroAnimationProps) {
+  const prefersReducedMotion = useReducedMotion();
+
   const container = {
     hidden: { opacity: 0 },
     show: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.12,
-        delayChildren: 0.1,
+        staggerChildren: prefersReducedMotion ? 0 : 0.12,
+        delayChildren: prefersReducedMotion ? 0 : 0.1,
       },
     },
   };
 
   const item = {
-    hidden: { opacity: 0, y: 20 },
+    hidden: prefersReducedMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 },
     show: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.6, ease: [0.21, 0.47, 0.32, 0.98] },
+      transition: { duration: 0.65, ease: EASE_OUT_QUINT },
     },
   };
 
-  // Render tagline with highlighted words
+  const highlight = {
+    hidden: prefersReducedMotion
+      ? { opacity: 1, color: 'var(--accent)' }
+      : { opacity: 0.4, color: 'var(--text-secondary)' },
+    show: {
+      opacity: 1,
+      color: 'var(--accent)',
+      transition: {
+        duration: 0.7,
+        ease: EASE_OUT_QUINT,
+        delay: prefersReducedMotion ? 0 : 0.55,
+      },
+    },
+  };
+
   function renderTagline(text: string) {
     if (highlightWords.length === 0) return text;
-    
+
     const parts: (string | JSX.Element)[] = [];
     let remaining = text;
-    
+
     highlightWords.forEach((word) => {
       const idx = remaining.indexOf(word);
       if (idx >= 0) {
         if (idx > 0) parts.push(remaining.slice(0, idx));
-        parts.push(<span key={word} className="hero-highlight">{word}</span>);
+        parts.push(
+          <motion.span
+            key={word}
+            variants={highlight}
+            className="hero-highlight"
+          >
+            {word}
+          </motion.span>
+        );
         remaining = remaining.slice(idx + word.length);
       }
     });
     if (remaining) parts.push(remaining);
-    
+
     return parts;
   }
 
@@ -91,13 +117,12 @@ export default function HeroAnimation({ name, tagline, highlightWords = [] }: He
         .hero-tagline-first {
           font-size: clamp(1.1rem, 2.5vw, 1.5rem);
           font-weight: 500;
-          color: var(--text-primary);
-          opacity: 0.7;
+          color: var(--text-secondary);
           margin-bottom: 0.5rem;
         }
         .hero-highlight {
-          color: var(--accent);
           font-weight: 500;
+          will-change: color, opacity;
         }
       `}</style>
     </motion.div>

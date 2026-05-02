@@ -1,4 +1,4 @@
-import { motion, useInView } from 'framer-motion';
+import { motion, useInView, useReducedMotion } from 'framer-motion';
 import { useRef } from 'react';
 
 interface ScrollFadeInProps {
@@ -18,6 +18,7 @@ export default function ScrollFadeIn({
 }: ScrollFadeInProps) {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once, margin: '-80px 0px' });
+  const prefersReducedMotion = useReducedMotion();
 
   const directionOffset: Record<string, { x?: number; y?: number }> = {
     up: { y: 24 },
@@ -27,14 +28,16 @@ export default function ScrollFadeIn({
     none: {},
   };
 
+  if (prefersReducedMotion) {
+    return <div ref={ref} className={className}>{children}</div>;
+  }
+
   const initial = {
     opacity: 0,
     ...directionOffset[direction],
   };
 
-  const animate = isInView
-    ? { opacity: 1, x: 0, y: 0 }
-    : initial;
+  const animate = isInView ? { opacity: 1, x: 0, y: 0 } : initial;
 
   return (
     <motion.div
@@ -44,7 +47,7 @@ export default function ScrollFadeIn({
       transition={{
         duration: 0.5,
         delay,
-        ease: [0.21, 0.47, 0.32, 0.98],
+        ease: [0.22, 1, 0.36, 1],
       }}
       className={className}
     >

@@ -1,4 +1,5 @@
 ---
+import { ClientRouter } from 'astro:transitions';
 import SEOHead from '../components/SEOHead.astro';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
@@ -21,12 +22,39 @@ const { title, description, image, personSchema = false } = Astro.props;
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400&display=swap" rel="stylesheet" />
+    <ClientRouter />
   </head>
   <body>
-    <Navbar />
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <Navbar transition:persist />
     <main id="main-content">
       <slot />
     </main>
-    <Footer />
+    <Footer transition:persist />
   </body>
 </html>
+
+<style is:global>
+  .skip-link {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 0.6rem 1rem;
+    background: var(--accent);
+    color: var(--text-on-accent);
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    border-radius: 0 0 6px 0;
+    transform: translateY(-100%);
+    transition: transform 0.18s cubic-bezier(0.22, 1, 0.36, 1);
+    z-index: 100;
+  }
+
+  .skip-link:focus,
+  .skip-link:focus-visible {
+    transform: translateY(0);
+    outline: 2px solid var(--text-primary);
+    outline-offset: 2px;
+  }
+</style>

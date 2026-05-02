@@ -20,7 +20,7 @@ const experience: Experience[] = [
     ],
   },
   {
-    role: 'Undergraduate Researcher — Diffusion Models & Molecular Dynamics',
+    role: 'Undergraduate Researcher: Diffusion Models & Molecular Dynamics',
     organization: 'MIT, supervised by Prof. Tommi Jaakkola',
     startDate: 'Feb 2026',
     endDate: 'Present',
@@ -30,7 +30,7 @@ const experience: Experience[] = [
     ],
   },
   {
-    role: 'Undergraduate Researcher — Reinforcement Learning & Embodied AI',
+    role: 'Undergraduate Researcher: Reinforcement Learning & Embodied AI',
     organization: 'FortyFive AI Lab, MIT, supervised by Dr. Ge Yang',
     startDate: 'Oct 2025',
     endDate: 'Present',
@@ -41,7 +41,7 @@ const experience: Experience[] = [
     ],
   },
   {
-    role: 'Undergraduate Researcher — Learning-based Control',
+    role: 'Undergraduate Researcher: Learning-based Control',
     organization: 'Tsinghua University, supervised by Prof. Huazhe Xu',
     startDate: 'Mar 2025',
     endDate: 'Aug 2025',

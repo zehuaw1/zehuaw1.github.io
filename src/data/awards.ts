@@ -8,7 +8,7 @@ export interface Award {
 
 const awards: Award[] = [
   {
-    title: 'Gold Medal — 1st Place in Theory',
+    title: 'Gold Medal, 1st Place in Theory',
     organization: '54th International Physics Olympiad (IPhO)',
     year: '2024',
     description: 'Highest score in the theoretical exam among all participants worldwide.',

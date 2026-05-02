@@ -37,7 +37,7 @@ const levelColor: Record<string, 'accent' | 'default' | 'muted'> = {
 };
 ---
 
-<BaseLayout title="CV" description={`Curriculum Vitae — ${siteConfig.name}`}>
+<BaseLayout title="CV" description={`Curriculum Vitae of ${siteConfig.name}`}>
   <section class="section">
     <div class="container">
       <ScrollFadeIn client:visible>
@@ -155,15 +155,20 @@ const levelColor: Record<string, 'accent' | 'default' | 'muted'> = {
     font-size: 0.85rem;
     font-weight: 500;
     background: var(--accent);
-    color: #ffffff;
+    color: var(--text-on-accent);
     text-decoration: none;
-    transition: opacity 0.15s;
+    transition: background 0.18s cubic-bezier(0.22, 1, 0.36, 1),
+                transform 0.12s cubic-bezier(0.22, 1, 0.36, 1);
     flex-shrink: 0;
   }
 
   .cv-download:hover {
-    opacity: 0.85;
-    color: #ffffff;
+    background: var(--accent-hover);
+    color: var(--text-on-accent);
+  }
+
+  .cv-download:active {
+    transform: translateY(1px);
   }
 
   .cv-section {
@@ -174,9 +179,9 @@ const levelColor: Record<string, 'accent' | 'default' | 'muted'> = {
     font-size: 1.2rem;
     font-weight: 700;
     letter-spacing: -0.02em;
-    margin-bottom: 1.5rem;
-    padding-left: 0.75rem;
-    border-left: 3px solid var(--accent);
+    margin: 0 0 1.25rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
     color: var(--text-primary);
   }
 

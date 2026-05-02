@@ -58,65 +58,72 @@ export default function ProjectFilter({ projects }: ProjectFilterProps) {
         {activeTag !== 'All' ? ` in "${activeTag}"` : ''}
       </p>
 
-      <motion.div layout className="projects-grid">
+      <motion.ol layout className="project-list" role="list">
         <AnimatePresence mode="popLayout">
           {filtered.map((project) => (
-            <motion.article
+            <motion.li
               key={project.id}
               layout
-              initial={{ opacity: 0, scale: 0.97 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.97 }}
-              transition={{ duration: 0.2 }}
-              className="pf-card"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.25, ease: [0.21, 0.47, 0.32, 0.98] }}
+              className="project-row"
             >
-              <div className="pf-body">
-                <div className="pf-header">
-                  <span className="pf-year">{project.year}</span>
-                  {project.featured && <span className="pf-featured">Featured</span>}
-                </div>
+              <div className="row-meta">
+                <span className="row-year">{project.year}</span>
+                {project.featured && <span className="row-featured">Featured</span>}
+              </div>
 
-                <a href={`/projects/${project.slug}`} className="pf-title-link">
-                  <h3 className="pf-title">{project.title}</h3>
+              <div className="row-body">
+                <a href={`/projects/${project.slug}`} className="row-title-link">
+                  <h3 className="row-title">{project.title}</h3>
                 </a>
-                <p className="pf-desc">{project.description}</p>
 
-                <div className="pf-tags">
-                  {project.tags.slice(0, 4).map((tag) => (
-                    <button
-                      key={tag}
-                      onClick={() => setActiveTag(tag)}
-                      className={`pf-tag ${activeTag === tag ? 'pf-tag-active' : ''}`}
-                    >
-                      {tag}
-                    </button>
-                  ))}
-                </div>
+                <p className="row-desc">{project.description}</p>
 
-                <div className="pf-links">
-                  {project.links.map((link) => (
-                    <a
-                      key={link.url}
-                      href={link.url}
-                      className="pf-link-btn"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                        <path d={iconMap[link.type] ?? iconMap.website} />
-                      </svg>
-                      {link.label ?? link.type}
+                <div className="row-meta-line">
+                  <div className="row-tags">
+                    {project.tags.map((tag, i) => (
+                      <span key={tag} className="row-tag">
+                        <button
+                          onClick={() => setActiveTag(tag)}
+                          className={`row-tag-btn ${activeTag === tag ? 'row-tag-active' : ''}`}
+                        >
+                          {tag}
+                        </button>
+                        {i < project.tags.length - 1 && (
+                          <span className="row-tag-sep" aria-hidden="true"> · </span>
+                        )}
+                      </span>
+                    ))}
+                  </div>
+
+                  <div className="row-links">
+                    {project.links.map((link) => (
+                      <a
+                        key={link.url}
+                        href={link.url}
+                        className="row-link"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                          <path d={iconMap[link.type] ?? iconMap.website} />
+                        </svg>
+                        {link.label ?? link.type}
+                      </a>
+                    ))}
+                    <a href={`/projects/${project.slug}`} className="row-link row-link-primary">
+                      Details →
                     </a>
-                  ))}
-                  <a href={`/projects/${project.slug}`} className="pf-link-btn pf-link-primary">
-                    Details →
-                  </a>
+                  </div>
                 </div>
               </div>
-            </motion.article>
+            </motion.li>
           ))}
         </AnimatePresence>
-      </motion.div>
+      </motion.ol>
 
       <style>{`
         .filter-bar {
@@ -134,134 +141,174 @@ export default function ProjectFilter({ projects }: ProjectFilterProps) {
           border: 1px solid var(--border);
           background: transparent;
           color: var(--text-muted);
-          transition: all 0.15s ease;
+          transition: color 0.15s ease, border-color 0.15s ease;
           font-family: inherit;
         }
         .filter-btn:hover {
           color: var(--text-primary);
           border-color: var(--text-primary);
         }
+        .filter-btn:active {
+          transform: translateY(1px);
+        }
         .filter-btn-active {
-          background: var(--text-primary);
-          color: var(--bg);
+          color: var(--text-primary);
           border-color: var(--text-primary);
+          font-weight: 600;
         }
         .filter-count {
           font-size: 0.82rem;
           color: var(--text-muted);
           margin-bottom: 1.75rem;
+          font-family: var(--font-mono);
         }
-        .projects-grid {
+
+        .project-list {
+          list-style: none;
+          margin: 0;
+          padding: 0;
+          display: flex;
+          flex-direction: column;
+        }
+        .project-row {
           display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-          gap: 1.25rem;
+          grid-template-columns: 6rem 1fr;
+          gap: 1.5rem;
+          padding: 1.75rem 0;
+          border-bottom: 1px solid var(--border-subtle);
         }
-        .pf-card {
-          background: var(--bg-card);
-          border: 1px solid var(--border);
-          border-radius: 8px;
-          box-shadow: var(--card-shadow);
-          transition: box-shadow 0.2s, transform 0.2s;
+        .project-row:first-child {
+          border-top: 1px solid var(--border-subtle);
+        }
+        @media (max-width: 640px) {
+          .project-row {
+            grid-template-columns: 1fr;
+            gap: 0.5rem;
+            padding: 1.25rem 0;
+          }
+        }
+
+        .row-meta {
           display: flex;
           flex-direction: column;
+          gap: 0.35rem;
+          padding-top: 0.35rem;
         }
-        .pf-card:hover {
-          box-shadow: var(--card-shadow-hover);
-          transform: translateY(-1px);
-        }
-        .pf-body {
-          padding: 1.5rem;
-          display: flex;
-          flex-direction: column;
-          gap: 0.7rem;
-          flex: 1;
-        }
-        .pf-header {
-          display: flex;
-          align-items: center;
-          gap: 0.75rem;
-        }
-        .pf-year {
-          font-size: 0.75rem;
+        .row-year {
+          font-size: 0.85rem;
           font-weight: 500;
           font-family: var(--font-mono);
           color: var(--text-muted);
         }
-        .pf-featured {
+        .row-featured {
           font-size: 0.7rem;
-          font-weight: 500;
-          color: var(--text-muted);
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.1em;
+          color: var(--accent);
         }
-        .pf-title-link { text-decoration: none; }
-        .pf-title {
-          font-size: 1rem;
+        @media (max-width: 640px) {
+          .row-meta {
+            flex-direction: row;
+            align-items: center;
+            gap: 0.85rem;
+            padding-top: 0;
+          }
+        }
+
+        .row-body {
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
+          min-width: 0;
+        }
+        .row-title-link {
+          text-decoration: none;
+          align-self: flex-start;
+        }
+        .row-title {
+          font-size: 1.15rem;
           font-weight: 700;
           color: var(--text-primary);
-          line-height: 1.35;
+          line-height: 1.3;
           letter-spacing: -0.02em;
           margin: 0;
+          transition: color 0.15s ease;
         }
-        .pf-title-link:hover .pf-title { opacity: 0.7; }
-        .pf-desc {
-          font-size: 0.85rem;
+        .row-title-link:hover .row-title {
+          color: var(--accent);
+        }
+        .row-desc {
+          font-size: 0.95rem;
           color: var(--text-secondary);
           line-height: 1.6;
-          display: -webkit-box;
-          -webkit-line-clamp: 3;
-          -webkit-box-orient: vertical;
-          overflow: hidden;
           margin: 0;
-          flex: 1;
+          max-width: 60ch;
         }
-        .pf-tags {
+
+        .row-meta-line {
           display: flex;
           flex-wrap: wrap;
-          gap: 0.5rem;
+          align-items: center;
+          justify-content: space-between;
+          gap: 0.75rem 1.5rem;
+          margin-top: 0.4rem;
         }
-        .pf-tag {
-          font-size: 0.72rem;
-          font-weight: 400;
+
+        .row-tags {
+          display: flex;
+          flex-wrap: wrap;
+          align-items: baseline;
+          font-size: 0.78rem;
           color: var(--text-muted);
+          line-height: 1.6;
+        }
+        .row-tag-btn {
           background: none;
           border: none;
-          cursor: pointer;
           padding: 0;
-          font-family: inherit;
-          transition: color 0.15s;
+          font: inherit;
+          color: inherit;
+          cursor: pointer;
+          transition: color 0.15s ease;
         }
-        .pf-tag:hover { color: var(--text-primary); }
-        .pf-tag-active {
+        .row-tag-btn:hover {
+          color: var(--text-primary);
+        }
+        .row-tag-active {
           color: var(--text-primary);
           font-weight: 600;
         }
-        .pf-links {
+        .row-tag-sep {
+          color: var(--text-muted);
+          opacity: 0.6;
+          margin: 0 0.1em;
+        }
+
+        .row-links {
           display: flex;
           flex-wrap: wrap;
-          gap: 0.35rem;
-          padding-top: 0.75rem;
-          border-top: 1px solid var(--border-subtle);
-          margin-top: auto;
+          gap: 1rem;
+          align-items: center;
         }
-        .pf-link-btn {
+        .row-link {
           display: inline-flex;
           align-items: center;
-          gap: 0.28rem;
-          padding: 0.25rem 0.6rem;
-          border-radius: 4px;
-          font-size: 0.73rem;
+          gap: 0.3rem;
+          font-size: 0.82rem;
           font-weight: 500;
-          color: var(--text-muted);
-          border: 1px solid var(--border);
+          color: var(--text-secondary);
           text-decoration: none;
-          transition: all 0.15s;
+          transition: color 0.15s ease;
         }
-        .pf-link-btn:hover {
+        .row-link:hover {
           color: var(--text-primary);
-          border-color: var(--text-primary);
         }
-        .pf-link-primary {
-          color: var(--text-primary);
-          margin-left: auto;
+        .row-link-primary {
+          color: var(--accent);
+        }
+        .row-link-primary:hover {
+          color: var(--accent-hover);
         }
       `}</style>
     </div>

@@ -20,12 +20,12 @@ const education: Education[] = [
     location: 'Cambridge, MA',
     gpa: '5.0/5.0',
     notes: [
-      'FortyFive AI Lab (Dr. Ge Yang) — RL, humanoid whole-body control, embodied AI',
-      "Prof. Tommi Jaakkola's group — diffusion models and molecular dynamics",
+      'FortyFive AI Lab (Dr. Ge Yang): RL, humanoid whole-body control, embodied AI',
+      "Prof. Tommi Jaakkola's group: diffusion models and molecular dynamics",
     ],
   },
   {
-    institution: 'Tsinghua University — IIIS (Yao Class)',
+    institution: 'Tsinghua University, IIIS (Yao Class)',
     degree: 'Undergraduate',
     field: 'Computer Science',
     startYear: '2024',

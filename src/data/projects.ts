@@ -65,7 +65,7 @@ const projects: Project[] = [
     slug: 'paperplay',
     title: 'PaperPlay: Hand-drawn Sketches to Playable Games',
     description:
-      'HackMIT 2025 — 2nd Place Modal Prize. Turn hand-drawn sketches into playable physics games with real-time AI commentary.',
+      'HackMIT 2025: 2nd Place, Modal Prize. Turn hand-drawn sketches into playable physics games with real-time AI commentary.',
     year: '2025',
     venue: 'HackMIT 2025',
     tags: ['OpenCV', 'Physics Engine', 'AI', 'Hackathon'],
