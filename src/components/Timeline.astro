@@ -36,7 +36,20 @@ const { items } = Astro.props;
         </div>
 
         <h3 class="timeline-title">{item.title}</h3>
-        <p class="timeline-org">{item.organization}</p>
+        {(() => {
+          const sep = ', supervised by ';
+          const idx = item.organization.indexOf(sep);
+          if (idx > 0) {
+            return (
+              <p class="timeline-org">
+                {item.organization.slice(0, idx)}
+                <span class="timeline-org-sep">{sep}</span>
+                <em>{item.organization.slice(idx + sep.length)}</em>
+              </p>
+            );
+          }
+          return <p class="timeline-org">{item.organization}</p>;
+        })()}
 
         {item.description && (
           <p class="timeline-description">{item.description}</p>
@@ -148,6 +161,16 @@ const { items } = Astro.props;
     font-weight: 500;
     color: var(--text-secondary);
     margin: 0 0 0.6rem;
+  }
+
+  .timeline-org-sep {
+    font-weight: 400;
+    color: var(--text-muted);
+  }
+
+  .timeline-org em {
+    font-weight: 500;
+    color: var(--text-primary);
   }
 
   .timeline-description {

@@ -33,10 +33,10 @@ const experience: Experience[] = [
     role: 'Undergraduate Researcher: Reinforcement Learning & Embodied AI',
     organization: 'FortyFive AI Lab, MIT, supervised by Dr. Ge Yang',
     startDate: 'Oct 2025',
-    endDate: 'Present',
+    endDate: 'Apr 2026',
     location: 'Cambridge, MA',
     bullets: [
-      'Developing RL and imitation learning pipelines for humanoid whole-body control; investigating scaling laws for policy performance and generalization.',
+      'Developed RL and imitation learning pipelines for humanoid whole-body control; investigated scaling laws for policy performance and generalization.',
       'Contributed to productionization of Vuer (3D visualization) and ML-Dash (experiment tracking & data storage).',
     ],
   },

@@ -121,6 +121,7 @@ export default function HeroAnimation({ name, tagline, highlightWords = [] }: He
           margin-bottom: 0.5rem;
         }
         .hero-highlight {
+          font-style: italic;
           font-weight: 500;
           will-change: color, opacity;
         }

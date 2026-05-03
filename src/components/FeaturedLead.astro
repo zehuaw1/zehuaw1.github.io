@@ -21,7 +21,7 @@ const description = project.longDescription ?? project.description;
 <article class="lead">
   <div class="lead-meta">
     <span class="lead-year">{project.year}</span>
-    {project.venue && <span class="lead-venue">{project.venue}</span>}
+    {project.venue && <em class="lead-venue">{project.venue}</em>}
     <span class="lead-marker">Lead</span>
   </div>
 
@@ -87,8 +87,9 @@ const description = project.longDescription ?? project.description;
   }
 
   .lead-venue {
-    font-size: 0.78rem;
-    color: var(--text-muted);
+    font-size: 0.85rem;
+    font-style: italic;
+    color: var(--text-secondary);
   }
 
   .lead-marker {

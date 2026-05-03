@@ -25,6 +25,8 @@ try {
 
 <BaseLayout personSchema={true}>
   <section class="hero-section">
+    <span class="hero-watermark" aria-hidden="true">∇</span>
+
     <div class="hero-container">
       <div class="hero-layout">
         <div class="hero-content">
@@ -80,7 +82,7 @@ try {
   <section class="section" id="about">
     <div class="container">
       <ScrollFadeIn client:visible>
-        <SectionHeading title="About" />
+        <SectionHeading title="About" index="01" />
       </ScrollFadeIn>
       <ScrollFadeIn client:visible delay={0.1}>
         <div class="about-full">
@@ -135,6 +137,7 @@ try {
         <SectionHeading
           title="Featured Projects"
           subtitle="Selected research projects and open-source work"
+          index="02"
         />
       </ScrollFadeIn>
       <div class="featured-stack">
@@ -166,12 +169,13 @@ try {
   <section class="section">
     <div class="container">
       <ScrollFadeIn client:visible>
-        <SectionHeading title="News" subtitle="Recent updates and announcements" />
+        <SectionHeading title="News" subtitle="Recent updates and announcements" index="03" />
       </ScrollFadeIn>
       <div class="news-list">
         {siteConfig.news.map((item, i) => (
           <ScrollFadeIn client:visible delay={i * 0.08}>
             <div class="news-item">
+              <span class="news-glyph" aria-hidden="true">∇</span>
               <span class="news-date">{item.date}</span>
               <p class="news-text">
                 {item.link ? (
@@ -207,12 +211,30 @@ try {
     }
   }
 
+  .hero-watermark {
+    position: absolute;
+    top: 50%;
+    left: clamp(1.5rem, 5vw, 4rem);
+    transform: translateY(-50%);
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 500;
+    font-size: clamp(10rem, 22vw, 20rem);
+    line-height: 1;
+    color: var(--accent);
+    opacity: 0.05;
+    pointer-events: none;
+    user-select: none;
+    z-index: 0;
+  }
+
   .hero-container {
+    position: relative;
+    z-index: 1;
     max-width: 72rem;
     margin: 0 auto;
     padding: 0 1.5rem;
     width: 100%;
-    position: relative;
   }
 
   .hero-layout {
@@ -390,15 +412,40 @@ try {
   }
 
   .news-item {
-    display: flex;
-    gap: 1.25rem;
+    display: grid;
+    grid-template-columns: 1.25rem 5.5rem 1fr;
+    gap: 0.75rem 1rem;
     padding: 0.85rem 0;
     border-bottom: 1px solid var(--border-subtle);
     align-items: baseline;
   }
 
+  @media (max-width: 640px) {
+    .news-item {
+      grid-template-columns: 1.25rem 1fr;
+      gap: 0.5rem 0.75rem;
+    }
+    .news-date {
+      grid-column: 2;
+    }
+    .news-text {
+      grid-column: 1 / -1;
+      padding-left: 2rem;
+    }
+  }
+
   .news-item:last-child {
     border-bottom: none;
+  }
+
+  .news-glyph {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 1rem;
+    color: var(--accent);
+    line-height: 1;
+    align-self: center;
+    text-align: center;
   }
 
   .news-date {
@@ -407,7 +454,6 @@ try {
     font-family: var(--font-mono);
     color: var(--text-muted);
     white-space: nowrap;
-    flex-shrink: 0;
   }
 
   .news-text {

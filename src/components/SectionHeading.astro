@@ -3,14 +3,18 @@ interface Props {
   title: string;
   subtitle?: string;
   align?: 'left' | 'center';
+  index?: string;
   class?: string;
 }
 
-const { title, subtitle, align = 'left', class: className = '' } = Astro.props;
+const { title, subtitle, align = 'left', index, class: className = '' } = Astro.props;
 ---
 
 <div class={`section-heading ${align === 'center' ? 'heading-center' : ''} ${className}`}>
-  <h2 class="heading-title">{title}</h2>
+  <div class="heading-row">
+    {index && <span class="heading-index" aria-hidden="true">{index}</span>}
+    <h2 class="heading-title">{title}</h2>
+  </div>
   {subtitle && <p class="heading-subtitle">{subtitle}</p>}
 </div>
 
@@ -19,8 +23,29 @@ const { title, subtitle, align = 'left', class: className = '' } = Astro.props;
     margin-bottom: 3rem;
   }
 
+  .heading-row {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+  }
+
   .heading-center {
     text-align: center;
+  }
+
+  .heading-center .heading-row {
+    justify-content: center;
+  }
+
+  .heading-index {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    line-height: 1;
+    flex-shrink: 0;
+    transform: translateY(-0.6em);
   }
 
   .heading-title {
@@ -29,7 +54,7 @@ const { title, subtitle, align = 'left', class: className = '' } = Astro.props;
     color: var(--text-primary);
     letter-spacing: -0.03em;
     line-height: 1.1;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0;
   }
 
   .heading-subtitle {

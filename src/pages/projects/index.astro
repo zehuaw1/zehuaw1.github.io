@@ -1,19 +1,21 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import SectionHeading from '../../components/SectionHeading.astro';
 import ProjectFilter from '../../components/ProjectFilter.tsx';
 import ScrollFadeIn from '../../components/ScrollFadeIn.tsx';
 import projects from '../../data/projects';
+
+const featuredCount = projects.filter((p) => p.featured).length;
+const projectsMeta = `${projects.length} ENTRIES · ${featuredCount} FEATURED`;
 ---
 
 <BaseLayout title="Projects" description="Research projects and open-source work">
   <section class="section">
     <div class="container">
       <ScrollFadeIn client:visible>
-        <SectionHeading
-          title="Projects"
-          subtitle="Research projects, open-source tools, and experimental work"
-        />
+        <div class="projects-header">
+          <h1 class="projects-page-title">Projects</h1>
+          <p class="projects-page-meta">{projectsMeta}</p>
+        </div>
       </ScrollFadeIn>
       <ScrollFadeIn client:visible delay={0.1}>
         <ProjectFilter client:load projects={projects} />
@@ -27,5 +29,31 @@ import projects from '../../data/projects';
     max-width: 72rem;
     margin: 0 auto;
     padding: 0 1.5rem;
+  }
+
+  .projects-header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    margin-bottom: 3rem;
+  }
+
+  .projects-page-title {
+    font-family: var(--font-serif);
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    margin: 0;
+    color: var(--text-primary);
+  }
+
+  .projects-page-meta {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    color: var(--text-muted);
+    margin: 0;
   }
 </style>
