@@ -20,6 +20,24 @@ export interface ProjectLink {
 
 const projects: Project[] = [
   {
+    slug: 'video-real2sim',
+    title: 'Video Real2Sim (VR2S)',
+    description:
+      '6.8300 final project: uses a video model to hallucinate orbital observations from one populated-scene photo, then reconstructs the scene with a pose-free 3D stack.',
+    year: '2026',
+    venue: 'MIT 6.8300',
+    tags: ['Computer Vision', '3D Reconstruction', 'Video Models', 'Real2Sim'],
+    links: [
+      { label: 'Project Page', url: '/vr2s/', type: 'project' },
+    ],
+    featured: true,
+    longDescription: `Video Real2Sim explores a single-image route to scene reconstruction for populated real-world scenes. Given one photo, the pipeline uses a general video model to synthesize missing orbital observations, then feeds those views into a pose-free reconstruction stack.
+
+The goal is not to claim that video replaces geometry. The project asks a narrower question: when the observed image does not expose the back side, contact regions, or other useful scene evidence, can generated video provide enough additional observations to improve reconstruction? In the final report, the strongest gains appear in perceptual and back-side reconstruction quality, with metric-level caveats and small exceptions surfaced explicitly.
+
+This was my final project for MIT 6.8300 Advances in Computer Vision.`,
+  },
+  {
     slug: 'humanoid-flow-matching',
     title: 'Fast Humanoid Loco-Manipulation via Flow Matching',
     description:

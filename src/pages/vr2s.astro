@@ -1,0 +1,592 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Video Real2Sim (VR2S)"
+  description="Final project for 6.8300 Computer Vision (Spring 2026), MIT."
+>
+  <article class="article-shell">
+    <aside class="article-toc" aria-label="Article outline">
+      <p class="toc-title">Outline</p>
+      <a href="#intro">1. Introduction</a>
+      <a href="#related_work">2. Related Work</a>
+      <a href="#method">3. Method</a>
+      <a href="#experiments">4. Experiments</a>
+      <a href="#exp_setup" class="toc-child">4.1 Setup</a>
+      <a href="#exp_headline" class="toc-child">4.2 Headline comparison</a>
+      <a href="#exp_bg" class="toc-child">4.3 Where multi-view evidence helps</a>
+      <a href="#exp_ablation" class="toc-child">4.4 Ablation analysis</a>
+      <a href="#exp_failures" class="toc-child">4.5 Failure modes</a>
+      <a href="#discussion">5. Discussion and limitations</a>
+      <a href="#references">References</a>
+    </aside>
+
+    <div class="article-main">
+      <header class="article-header">
+        <p class="article-kicker">Final project for 6.8300 Computer Vision (Spring 2026), MIT</p>
+        <h1>Video Real2Sim (VR2S)</h1>
+        <p class="article-authors">Zehua Wang · Joy Zhuo</p>
+      </header>
+
+      <figure class="teaser-grid">
+        <div>
+          <figcaption>Input photo</figcaption>
+          <img src="/vr2s-report/assets/scene1_input.jpg" alt="Input photo, scene 1" />
+        </div>
+        <div>
+          <figcaption>VR2S</figcaption>
+          <img src="/vr2s-report/assets/scene_ours.png" alt="VR2S reconstructed scene" />
+        </div>
+        <div>
+          <figcaption>Baseline (OR2S)</figcaption>
+          <img src="/vr2s-report/assets/scene_baseline.png" alt="OpenReal2Sim baseline reconstruction" />
+        </div>
+        <p class="figure-caption">
+          Teaser: single photo in (left), VR2S reconstruction out (middle). Right is the OpenReal2Sim single-image baseline on the same photo.
+        </p>
+      </figure>
+
+      <section id="intro" class="article-section">
+        <h2>1. Introduction</h2>
+        <p>Turning a single tabletop photograph into a 3D scene that can support simulation is still a bottleneck for scalable real2sim. The hard part is not only engineering. It is information. A single camera view cannot observe the back of an object, the contact patch hidden under it, or geometry clipped by the image boundary. Monocular depth can infer a plausible front surface, but the missing views remain missing.</p>
+        <p>Prior approaches usually choose one of three compromises. Monocular-depth pipelines preserve the single-image interface, but lift only the visible surface. Per-object generators can hallucinate complete assets, but have trouble preserving scene scale, contacts, and support geometry. Dense multi-view capture recovers much richer structure, but requires the user to walk around the scene. That walkaround is exactly what a single-image real2sim system is supposed to avoid. We characterize these choices in <a href="#related_work">Section 2</a>.</p>
+        <p>Video Real2Sim (VR2S) tests a different compromise. Instead of asking a depth model to infer all geometry from one image, we ask a general image-to-video model to synthesize the missing views, then pass those views to a pose-free reconstruction stack. The video model is not given camera extrinsics, depth maps, or 3D supervision at inference time. It receives only the input image and a prompt asking for an orbital video. With small exceptions noted in the experimental setup, this is mostly a single-image pipeline: the populated scene is always specified by one photo, while the video model supplies a synthetic walkaround rather than a real capture.</p>
+        <p>The answer is not simply that video diffusion solves real2sim. VR2S improves perceptual fidelity and back-side appearance in our evaluation, especially when extra views reveal object or background structure that a single photo cannot. It also loses some silhouette accuracy because the generated views, segmentation masks, and ICP placement introduce drift. The useful claim is therefore narrower and more concrete: synthetic video can relax the single-view information bottleneck, but it does not remove the need for careful reconstruction, alignment, and evaluation.</p>
+        <aside class="margin-note">We call the method <em>Video Real2Sim</em> (VR2S): image &rarr; image-to-video diffusion &rarr; pose-free multi-view reconstruction &rarr; per-object meshes and placement. No camera conditioning is given to the generator at any stage.</aside>
+      </section>
+
+      <section id="related_work" class="article-section">
+        <h2>2. Related Work</h2>
+        <p><strong>Single-image real2sim.</strong> RoLA <a href="#ref_rola">[1]</a> and OpenReal2Sim <a href="#ref_or2s">[2]</a> typically segment the scene, estimate monocular depth with models such as MoGe <a href="#ref_moge">[6]</a>, then back-project the visible surface. This gives strong input-view placement, but no direct observation of object backs, occluded contact regions, or clipped geometry. Per-object generators such as Gen2Sim <a href="#ref_gen2sim">[3]</a> and InstantMesh <a href="#ref_instantmesh">[4]</a> improve object completeness but weaken scene-scale placement. Dense multi-view methods such as SplatSim <a href="#ref_splatsim">[5]</a>, NeRF, and 3DGS recover richer geometry, but require a real walkaround.</p>
+        <p><strong>Pose-free multi-view reconstruction.</strong> DUSt3R <a href="#ref_dust3r">[7]</a>, MASt3R <a href="#ref_mast3r">[8]</a>, VGGT <a href="#ref_vggt">[9]</a>, and DA3 <a href="#ref_da3">[10]</a> recover geometry from unposed views using feed-forward models. We use DA3 because it turns an unposed video into depth, intrinsics, and extrinsics in a shared frame. Since DA3 also appears in our evaluation pipeline, we treat those outputs as proxy targets rather than sensor-grade ground truth.</p>
+        <p><strong>Video diffusion as a view synthesizer.</strong> General image-to-video models such as Wan <a href="#ref_wan">[11]</a>, CogVideoX <a href="#ref_cogvideox">[12]</a>, and Veo <a href="#ref_veo">[13]</a> can produce orbit-like videos from one image. The views are not metrically guaranteed, but they often contain side and back evidence that monocular depth never receives. We deliberately avoid camera-conditioned generators such as Stable Video 4D <a href="#ref_sv4d">[14]</a>, MotionCtrl <a href="#ref_motionctrl">[15]</a>, and CameraCtrl <a href="#ref_cameractrl">[16]</a>, because VR2S asks whether general video priors alone are useful.</p>
+      </section>
+
+      <section id="method" class="article-section">
+        <h2>3. Method</h2>
+        <figure class="diagram-figure">
+          <svg viewBox="0 0 760 152" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="VR2S pipeline diagram">
+            <defs>
+              <marker id="arr" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+                <path d="M0,0.5 L0,6.5 L7,3.5 z" fill="#777"></path>
+              </marker>
+              <marker id="arr-d" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+                <path d="M0,0.5 L0,6.5 L7,3.5 z" fill="#bbb"></path>
+              </marker>
+            </defs>
+            <text x="308" y="13" text-anchor="middle" font-size="8" fill="#bbb" font-style="italic">bg workaround</text>
+            <rect x="108" y="18" width="80" height="22" rx="3" fill="#fafafa" stroke="#ccc" stroke-width="1.2" stroke-dasharray="4,3"></rect>
+            <text x="148" y="32" text-anchor="middle" font-size="9" fill="#aaa">BG remove</text>
+            <line x1="188" y1="29" x2="199" y2="29" stroke="#ccc" stroke-width="1.2" stroke-dasharray="4,3" marker-end="url(#arr-d)"></line>
+            <rect x="200" y="18" width="68" height="22" rx="3" fill="#f0faf6" stroke="#7dbfa2" stroke-width="1.2" stroke-dasharray="4,3"></rect>
+            <text x="234" y="32" text-anchor="middle" font-size="9" font-weight="bold" fill="#5a9e82">Veo3 bg</text>
+            <line x1="268" y1="29" x2="279" y2="29" stroke="#ccc" stroke-width="1.2" stroke-dasharray="4,3" marker-end="url(#arr-d)"></line>
+            <rect x="280" y="18" width="76" height="22" rx="3" fill="#fafafa" stroke="#ccc" stroke-width="1.2" stroke-dasharray="4,3"></rect>
+            <text x="318" y="32" text-anchor="middle" font-size="9" fill="#aaa">DA3 + 3DGS</text>
+            <line x1="356" y1="29" x2="367" y2="29" stroke="#ccc" stroke-width="1.2" stroke-dasharray="4,3" marker-end="url(#arr-d)"></line>
+            <rect x="368" y="18" width="80" height="22" rx="3" fill="#fafafa" stroke="#ccc" stroke-width="1.2" stroke-dasharray="4,3"></rect>
+            <text x="408" y="32" text-anchor="middle" font-size="9" fill="#aaa">TSDF bg mesh</text>
+            <polyline points="92,99 100,99 100,29 108,29" fill="none" stroke="#ccc" stroke-width="1.2" stroke-dasharray="4,3" marker-end="url(#arr-d)"></polyline>
+            <polyline points="448,29 458,29 458,99 466,99" fill="none" stroke="#ccc" stroke-width="1.2" stroke-dasharray="4,3" marker-end="url(#arr-d)"></polyline>
+            <rect x="10" y="82" width="82" height="34" rx="4" fill="#f8f8f8" stroke="#aaa" stroke-width="1.5"></rect>
+            <text x="51" y="96" text-anchor="middle" font-size="11" fill="#444">Input</text>
+            <text x="51" y="109" text-anchor="middle" font-size="11" fill="#444">photo</text>
+            <line x1="92" y1="99" x2="107" y2="99" stroke="#777" stroke-width="1.5" marker-end="url(#arr)"></line>
+            <rect x="108" y="82" width="82" height="34" rx="4" fill="#e8f5f1" stroke="#0e7862" stroke-width="2"></rect>
+            <text x="149" y="96" text-anchor="middle" font-size="11" font-weight="bold" fill="#0e7862">Veo3</text>
+            <text x="149" y="109" text-anchor="middle" font-size="9" fill="#0e7862">main orbit</text>
+            <line x1="190" y1="99" x2="205" y2="99" stroke="#777" stroke-width="1.5" marker-end="url(#arr)"></line>
+            <rect x="206" y="82" width="68" height="34" rx="4" fill="#f5f5f5" stroke="#aaa" stroke-width="1.5"></rect>
+            <text x="240" y="96" text-anchor="middle" font-size="11" fill="#666">DA3</text>
+            <text x="240" y="109" text-anchor="middle" font-size="10" fill="#888">depth+pts</text>
+            <line x1="274" y1="99" x2="289" y2="99" stroke="#777" stroke-width="1.5" marker-end="url(#arr)"></line>
+            <rect x="290" y="82" width="62" height="34" rx="4" fill="#f5f5f5" stroke="#aaa" stroke-width="1.5"></rect>
+            <text x="321" y="96" text-anchor="middle" font-size="11" fill="#666">SAM2</text>
+            <text x="321" y="109" text-anchor="middle" font-size="10" fill="#888">masks</text>
+            <line x1="352" y1="99" x2="367" y2="99" stroke="#777" stroke-width="1.5" marker-end="url(#arr)"></line>
+            <rect x="368" y="82" width="82" height="34" rx="4" fill="#f5f5f5" stroke="#aaa" stroke-width="1.5"></rect>
+            <text x="409" y="96" text-anchor="middle" font-size="11" fill="#666">Hy3D-2mv</text>
+            <text x="409" y="109" text-anchor="middle" font-size="10" fill="#888">meshes</text>
+            <line x1="450" y1="99" x2="465" y2="99" stroke="#777" stroke-width="1.5" marker-end="url(#arr)"></line>
+            <rect x="466" y="82" width="108" height="34" rx="4" fill="#f5f5f5" stroke="#aaa" stroke-width="1.5"></rect>
+            <text x="520" y="96" text-anchor="middle" font-size="11" fill="#666">ICP +</text>
+            <text x="520" y="109" text-anchor="middle" font-size="10" fill="#888">finalize</text>
+            <line x1="574" y1="99" x2="590" y2="99" stroke="#777" stroke-width="1.5" marker-end="url(#arr)"></line>
+            <rect x="591" y="82" width="80" height="34" rx="4" fill="#fff8e8" stroke="#b8820a" stroke-width="1.5"></rect>
+            <text x="631" y="96" text-anchor="middle" font-size="11" fill="#7a5500">scene</text>
+            <text x="631" y="109" text-anchor="middle" font-size="10" fill="#7a5500">.glb</text>
+            <rect x="10" y="131" width="12" height="10" rx="2" fill="#e8f5f1" stroke="#0e7862" stroke-width="1.5"></rect>
+            <text x="26" y="140" font-size="9" fill="#666">Veo3: our design choice</text>
+            <rect x="180" y="131" width="12" height="10" rx="2" fill="#f5f5f5" stroke="#aaa" stroke-width="1.5"></rect>
+            <text x="196" y="140" font-size="9" fill="#666">off-the-shelf</text>
+            <rect x="300" y="131" width="12" height="10" rx="2" fill="#fafafa" stroke="#ccc" stroke-width="1.2" stroke-dasharray="4,3"></rect>
+            <text x="316" y="140" font-size="9" fill="#aaa">bg workaround</text>
+            <rect x="435" y="131" width="12" height="10" rx="2" fill="#fff8e8" stroke="#b8820a" stroke-width="1.5"></rect>
+            <text x="451" y="140" font-size="9" fill="#666">output</text>
+          </svg>
+          <figcaption>Figure 1. VR2S pipeline. Two orbital videos are synthesized from one photo by Veo3: one over the populated scene and one over the background-removed image. Separate DA3 branches reconstruct foreground and support geometry, then ICP placement assembles the final scene mesh.</figcaption>
+        </figure>
+        <p><strong>Core idea.</strong> OpenReal2Sim lifts the visible surface from monocular depth. This preserves input-view placement well, but cannot observe object backs, under-object support regions, or clipped surfaces.</p>
+        <p>VR2S changes the source of evidence. Instead of asking one image to carry the whole reconstruction, we ask a general video model to synthesize an orbit. DA3 estimates poses and depth, SAM2 supplies masks, Hunyuan3D builds object meshes, TSDF fusion constructs the background, and ICP places objects back into the scene. The contribution is the substitution of synthetic multi-view evidence for the missing physical walkaround.</p>
+        <p><strong>The central design choice.</strong> Before reconstruction, VR2S passes the input image to <strong>Veo3</strong> and asks for an orbital video.</p>
+        <p>We give Veo3 no camera extrinsics, no depth conditioning, and no geometric supervision at inference time. It receives only the image and a prompt requesting a 360&deg; orbit. The experiment is whether that general model can provide enough side and back evidence to help real2sim reconstruction.</p>
+        <p>The claim is narrow: generated views can expose geometry and appearance that the input photo does not contain. This should improve back-side and perceptual reconstruction when the orbit is coherent, while hurting placement-sensitive metrics when the generated video or alignment drifts.</p>
+        <p><strong>Scope of contribution.</strong> DA3, SAM2, Hunyuan3D, TSDF fusion, and ICP are supporting components, not independent contributions. The design choice we defend is using a general video model to create the missing observations that the rest of the pipeline consumes.</p>
+        <p><strong>The two-video trick.</strong> VR2S generates one orbit of the populated scene and one orbit of a clean-background image produced by object removal. The second orbit lets us reconstruct support geometry under and behind objects. The two reconstructions are not explicitly matched frame-by-frame; placement handles alignment through the recovered support plane.</p>
+        <p><strong>Components.</strong> DA3 <a href="#ref_da3">[10]</a> processes the generated videos and emits per-frame depth, intrinsics, and extrinsics. For each pixel, back-projection follows the standard pinhole model</p>
+        <p class="equation">$X_c = (u - c_x) d / f_x, Y_c = (v - c_y) d / f_y, Z_c = d, X_w = R_c_to_w X_c + t_c_to_w,$</p>
+        <p>which lifts confident depth pixels into a world pointcloud. We anchor DA3 to the first frame (<code>ref_view_strategy="first"</code>) because the default reference selection drifts on low-texture generated videos.</p>
+        <p>Object masks come from Grounding DINO <a href="#ref_groundingdino">[18]</a> and SAM2 <a href="#ref_sam2">[17]</a>. Object meshes come from Hunyuan3D-2mv <a href="#ref_hy3d2mv">[19]</a> using four RGBA crops sampled near 0&deg;, 90&deg;, 180&deg;, and 270&deg; around each object. The clean-background orbit is converted to a background mesh by DA3+3DGS export, gsplat rendering, and Open3D TSDF fusion.</p>
+        <p><strong>Placement and finalization.</strong> Each object mesh is placed into the DA3 world frame by Sim3 ICP. We fit the support plane with RANSAC, rotate the scene upright, crop the background mesh, and lift each object slightly above the plane to avoid immediate intersection.</p>
+        <aside class="margin-note">The core contribution is the video model substitution. DA3, SAM2, Hy3D-2mv, ICP, and finalization are off-the-shelf components configured to support the video-first approach, not independent contributions.</aside>
+      </section>
+
+      <section id="experiments" class="article-section">
+        <h2>4. Experiments</h2>
+        <p>We evaluate VR2S on four real-world tabletop scenes chosen to vary support geometry and object shape, comparing against OpenReal2Sim (OR2S) on identical held-out novel views. <a href="#exp_setup">Section 4.1</a> describes the proxy evaluation protocol. <a href="#exp_headline">Section 4.2</a> reports the main tradeoff: VR2S improves perceptual fidelity, while OR2S keeps stronger silhouette alignment. <a href="#exp_bg">Section 4.3</a> examines where synthetic multi-view evidence helps. <a href="#exp_ablation">Section 4.4</a> studies the background-video and multi-view-object stages. <a href="#exp_failures">Section 4.5</a> characterizes two systematic failure modes.</p>
+        <figure class="video-grid">
+          <div>
+            <video src="/vr2s-report/assets/scene1_video_cropped.mp4" autoplay loop muted playsinline></video>
+            <figcaption>Scene 1</figcaption>
+          </div>
+          <div>
+            <video src="/vr2s-report/assets/scene2_video_cropped.mp4" autoplay loop muted playsinline></video>
+            <figcaption>Scene 2</figcaption>
+          </div>
+          <div>
+            <video src="/vr2s-report/assets/scene3_video_cropped.mp4" autoplay loop muted playsinline></video>
+            <figcaption>Scene 3</figcaption>
+          </div>
+          <div>
+            <video src="/vr2s-report/assets/scene4_video_cropped.mp4" autoplay loop muted playsinline></video>
+            <figcaption>Scene 4</figcaption>
+          </div>
+          <p class="figure-caption">Veo3-generated orbital videos for the four evaluation scenes. These videos provide the synthetic multi-view evidence consumed by DA3 and the downstream VR2S pipeline.</p>
+        </figure>
+      </section>
+
+      <section id="exp_setup" class="article-section">
+        <h2>4.1 Setup</h2>
+        <p><strong>Scenes.</strong> We evaluate on four real-world scenes that span a deliberate axis of support type and object geometry: a flat wooden table, a slanted deformable beanbag, a curved upholstered sofa cushion, and a grey floor with thin elongated objects. Scene compositions are shown in <a href="#exp_headline">Figure 2</a>. The setup is single-image for the populated scene in all cases. One protocol exception is worth stating up front: for Scene 2, the background branch uses a real captured clean-beanbag pass rather than a Gemini-inpainted clean image, because inpainting the deformable support produced unusable geometry. We keep that scene in the aggregate, but interpret background-branch results with this exception in mind.</p>
+        <p><strong>Evaluation protocol.</strong> For each scene we capture a held-out walkaround video covering roughly 360&deg; of the static scene. Running DA3 on this video recovers per-frame camera intrinsics, extrinsics, dense depth, and SAM2 object silhouettes. We use these as proxy evaluation targets, not as sensor-grade ground truth. This distinction matters because DA3 is also part of VR2S, and shared model bias could make some metrics more favorable to VR2S. We sample 16 evenly-spaced novel views from the recovered trajectory, of which 8 are back-side views with azimuth offset greater than 90&deg; from the input photo's camera. Back-side views carry the load-bearing evaluation signal, since front-facing views can score well even on a depth-pancake reconstruction. Each method's reconstruction is Sim3-aligned to the proxy pointcloud before rendering, and the input view is excluded from scoring. This means the reported metrics evaluate reconstructed appearance and geometry after global alignment; they do not prove that the pipeline recovers deployable scene scale or placement without held-out information.</p>
+        <p><strong>Metrics.</strong> For each held-out view, we compute per-object silhouette IoU against the SAM2 proxy mask, and masked LPIPS, PSNR, and SSIM against the corresponding held-out photo. Each photometric metric is reported separately for the foreground (the union of object masks) and the background regions. We aggregate to per-scene means. IoU is most sensitive to placement and scale, while LPIPS and PSNR better reflect back-side appearance and texture fidelity. We therefore read the metrics as complementary rather than expecting one method to dominate every column.</p>
+      </section>
+
+      <section id="exp_headline" class="article-section">
+        <h2>4.2 Headline comparison</h2>
+        <figure>
+          <img src="/vr2s-report/images/figure2_left.png" alt="The four evaluation scenes" />
+          <figcaption>Figure 2. The four evaluation scenes, spanning background type (flat wooden table, slanted beanbag, curved sofa cushion, grey floor) and object geometry (including thin elongated objects).</figcaption>
+        </figure>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Method</th>
+                <th>Mean IoU (all) &uarr;</th>
+                <th>Mean IoU (back) &uarr;</th>
+                <th>FG LPIPS (back) &darr;</th>
+                <th>BG LPIPS (all) &darr;</th>
+                <th>FG PSNR (back) &uarr;</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>OR2S</td><td><strong>0.562</strong> &plusmn; 0.133</td><td><strong>0.538</strong> &plusmn; 0.145</td><td>0.701 &plusmn; 0.084</td><td>0.646 &plusmn; 0.108</td><td>11.36 &plusmn; 2.43</td></tr>
+              <tr><td>VR2S (no bg video)</td><td>0.449 &plusmn; 0.082</td><td>0.442 &plusmn; 0.109</td><td>0.594 &plusmn; 0.074</td><td><strong>0.544</strong> &plusmn; 0.085</td><td>11.35 &plusmn; 2.08</td></tr>
+              <tr><td>VR2S (full)</td><td>0.525 &plusmn; 0.092</td><td>0.509 &plusmn; 0.121</td><td><strong>0.557</strong> &plusmn; 0.053</td><td>0.601 &plusmn; 0.067</td><td><strong>12.12</strong> &plusmn; 2.51</td></tr>
+            </tbody>
+          </table>
+          <p class="table-caption">Table 1. Headline comparison aggregated across all four scenes (mean &plusmn; per-scene std). Best value per column in bold. "back" restricts to the 8 held-out views with azimuth offset &gt;90&deg; from the input photo.</p>
+        </div>
+        <p>VR2S improves the perceptual metrics we care about most for novel-view reconstruction. Foreground LPIPS drops from 0.701 to 0.557, background LPIPS drops from 0.646 to 0.601, and foreground PSNR rises from 11.36 dB to 12.12 dB. The smaller per-scene standard deviations suggest that this is not driven by a single easy scene, although the dataset is too small for strong statistical claims. The background branch should be read more narrowly: it helps support geometry and contact reasoning in specific cases, especially when the relevant support surface is largely occluded, but it does not monotonically improve every background photometric metric. Qualitatively, the generated orbit gives VR2S evidence for sides and support regions that the input photo never observes, so back-side renders tend to look more complete.</p>
+        <p>OR2S performs better on silhouette IoU, scoring 0.562 to VR2S's 0.525 across all views, and 0.538 to 0.509 on back-side views. This is not a minor footnote; it is the main tradeoff. Because OR2S lifts the visible front surface directly from the input photo, each reconstructed object is anchored to the input silhouette by construction. VR2S reconstructs objects from generated multi-view evidence and then aligns them through Sim3 ICP. A few centimeters of placement or scale error can hurt IoU even when the rendered back side looks more plausible. The headline result is therefore mixed but useful: VR2S buys perceptual and back-side completeness at the cost of some placement-sensitive silhouette accuracy.</p>
+      </section>
+
+      <section id="exp_bg" class="article-section">
+        <h2>4.3 Where multi-view evidence helps</h2>
+        <p>VR2S helps most when the generated orbit exposes information that is absent or ambiguous in the input image. Three cases show up repeatedly in the evaluation.</p>
+        <p><strong>Non-planar support.</strong> Scene 2 uses a slanted beanbag rather than a flat table, exposing the limits of single-image back-projection. VR2S improves back-side IoU on this scene from 0.482 to 0.541. This result should be read with the setup caveat above: Scene 2 uses a real clean-background pass for the background branch, so it is evidence that support geometry matters, not a pure test of inpainted clean-background generation.</p>
+        <p><strong>Object-background separation.</strong> Single-image methods must infer contact regions from one view, so objects and support surfaces can fuse near their boundary. VR2S reconstructs a clean-background orbit separately from foreground objects, then places each object onto the recovered surface. In Scene 1, this improves back-side PSNR from 11.65 dB to 13.31 dB on foreground regions and from 15.71 dB to 18.30 dB on background regions.</p>
+        <p><strong>View-dependent surfaces.</strong> A single input view gives ambiguous evidence for glossy or curved objects. The clearest example is the Nintendo Switch display: VR2S uses four orbit crops, while OR2S sees only the front view. Switch back-side LPIPS improves from 0.899 to 0.544. Similar gains appear on the Scene 3 plate and balloon.</p>
+        <p>Aggregating per-object back-side LPIPS within each scene gives the same pattern. VR2S wins in every scene, with the largest gaps on Scenes 2 and 3 and smaller gains on the more box-like or flat cases.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Scene</th><th>OR2S &darr;</th><th>VR2S &darr;</th><th>&Delta; (VR2S &minus; OR2S)</th></tr></thead>
+            <tbody>
+              <tr><td>Scene 1 (laptop, mug, tissue)</td><td>0.613</td><td><strong>0.534</strong></td><td>&minus;0.079</td></tr>
+              <tr><td>Scene 2 (book, tennis, earmuffs)</td><td>0.825</td><td><strong>0.479</strong></td><td>&minus;0.347</td></tr>
+              <tr><td>Scene 3 (switch, plate, balloon)</td><td>0.776</td><td><strong>0.539</strong></td><td>&minus;0.237</td></tr>
+              <tr><td>Scene 4 (box, umbrella, orange)</td><td>0.573</td><td><strong>0.555</strong></td><td>&minus;0.018</td></tr>
+            </tbody>
+          </table>
+          <p class="table-caption">Table 2. Per-scene mean of per-object back-side LPIPS (averaged across the objects in each scene; lower is better). Scene 4's blue paint bottle is excluded since it is fully occluded from every back-side view.</p>
+        </div>
+      </section>
+
+      <section id="exp_ablation" class="article-section">
+        <h2>4.4 Ablation analysis</h2>
+        <p>Two ablations isolate the pipeline components most directly tied to the multi-view-evidence hypothesis: the dedicated background video and the multi-view conditioning of the per-object mesh generator. Both ablations modify one stage of the full pipeline while keeping the orientation and snap fixes in <code>icp_place</code> and <code>finalize</code> intact. The goal is not to explain every metric, but to test whether the extra generated views help in the places the method expects them to help.</p>
+        <p><strong>4.4.1 Background video.</strong> In the full pipeline, the background mesh is reconstructed from a dedicated clean-background orbit produced by Gemini-inpainting the input photo and feeding the result to the video model. In this ablation (<code>noBgVid</code>), we instead derive the background from the main video alone, masking out object pixels with dilated SAM masks before TSDF fusion.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Scene</th><th>VR2S (full) &uarr;</th><th>noBgVid &uarr;</th><th>&Delta;</th></tr></thead>
+            <tbody>
+              <tr><td>1 (table)</td><td>0.584</td><td>0.571</td><td>&minus;0.013</td></tr>
+              <tr><td>2 (beanbag)</td><td>0.541</td><td>0.528</td><td>&minus;0.013</td></tr>
+              <tr><td>3 (sofa)</td><td>0.609</td><td>0.349</td><td><strong>&minus;0.260</strong></td></tr>
+              <tr><td>4 (table)</td><td>0.305</td><td>0.320</td><td>+0.015</td></tr>
+            </tbody>
+          </table>
+          <p class="table-caption">Table 3. Mean back-side IoU with and without the dedicated background video.</p>
+        </div>
+        <p>The background-video ablation is an indirect but useful test. Table 3 reports back-side object IoU, not a direct under-object surface metric, so it should not be overread as a complete measurement of support quality. Still, the pattern is consistent with the visual failure mode. On the mostly planar or externally supported scenes (1, 2, 4), removing the background video produces near-neutral changes in back-side IoU. Scene 3, on a curved sofa cushion, exhibits a 0.260 drop. The contact patch directly under each placed object is never observed in the main video, and the resulting background TSDF has a crater there. When finalization snaps objects to the local surface, they fall through or tilt into the geometry. The dedicated background orbit helps because it reconstructs the support before objects occlude it.</p>
+        <p><strong>4.4.2 Multi-view conditioning of the mesh generator.</strong> The full pipeline feeds Hy3D-2mv four near-orthogonal RGBA crops drawn from the diffusion orbit. In this ablation (<code>singleViewHy3d</code>), we replace Hy3D-2mv with Hy3D-2 single-view, fed only the front SAM crop from the input view.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Scene</th><th>VR2S (full) &uarr;</th><th>singleViewHy3d &uarr;</th><th>&Delta;</th></tr></thead>
+            <tbody>
+              <tr><td>1 (table)</td><td>0.584</td><td>0.565</td><td>&minus;0.019</td></tr>
+              <tr><td>2 (beanbag)</td><td>0.541</td><td>0.573</td><td>+0.032</td></tr>
+              <tr><td>3 (sofa)</td><td>0.609</td><td>0.548</td><td><strong>&minus;0.060</strong></td></tr>
+              <tr><td>4 (table)</td><td>0.305</td><td>0.349</td><td>+0.044</td></tr>
+            </tbody>
+          </table>
+          <p class="table-caption">Table 4. Mean back-side IoU with and without multi-view conditioning of the per-object mesh generator.</p>
+        </div>
+        <p>The result is more nuanced than a simple "more views are better" hypothesis. Multi-view conditioning improves back-side IoU on Scene 3, where the curved cushion occludes shape-relevant parts of the objects in the input view, notably the balloon's tail and the underside of the plate. In that case, the multi-view crops supply evidence that the front view cannot. On Scenes 2 and 4, single-view Hy3D-2 outperforms the multi-view variant. The side and back SAM crops drawn from the diffusion orbit carry segmentation drift and silhouette noise, and that noise propagates into the shape model. For those scenes, the clean front crop alone produces a more reliable mesh.</p>
+        <p>The pure mesh-quality evaluation reinforces this pattern. Measured as per-object Chamfer distance under a free Sim3 alignment, <code>singleViewHy3d</code> produces the better mesh on three of four scenes:</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Scene</th><th>VR2S (full) &darr;</th><th>singleViewHy3d &darr;</th><th>Better mesh</th></tr></thead>
+            <tbody>
+              <tr><td>1</td><td>12.06 mm</td><td><strong>10.38 mm</strong></td><td>single-view</td></tr>
+              <tr><td>2</td><td>16.62 mm</td><td><strong>15.21 mm</strong></td><td>single-view</td></tr>
+              <tr><td>3</td><td><strong>12.56 mm</strong></td><td>18.62 mm</td><td>multi-view (+6 mm)</td></tr>
+              <tr><td>4</td><td>16.31 mm</td><td><strong>16.07 mm</strong></td><td>single-view</td></tr>
+            </tbody>
+          </table>
+          <p class="table-caption">Table 5. Mean Chamfer distance to proxy meshes, decoupled from placement.</p>
+        </div>
+        <p>Multi-view conditioning therefore helps when the orbit's additional views contain shape-relevant geometric information that the front view cannot supply (Scene 3), and hurts when the additional views inject silhouette noise that the front view would not have had (Scenes 1, 2, 4). The video model contributes useful information for scene reconstruction, but the per-object mesh stage is sensitive to the quality of that information in a way that does not always favor multi-view input.</p>
+      </section>
+
+      <section id="exp_failures" class="article-section">
+        <h2>4.5 Failure modes</h2>
+        <p>Two failure modes dominate our errors.</p>
+        <p><strong>FM1: Video-diffusion artifacts.</strong> The generated orbit can drift from the input scene. The folded umbrella in Scene 4 is the clearest case: its silhouette shifts across frames, and the resulting multi-view mesh is worse than the single-view alternative. Umbrella back-side IoU is 0.380 for VR2S, 0.425 for OR2S, and 0.493 for the singleViewHy3d ablation.</p>
+        <p><strong>FM2: Pose drift on inpainted backgrounds.</strong> The clean-background orbit is usually generated from a Gemini-inpainted image. When the inpainted image loses geometric constraints, DA3 pose estimates drift and TSDF fusion creates background artifacts. This is most visible in Scene 1. Scene 2 avoids the failure by using a real clean-beanbag pass, which is why its background results should not be treated as evidence that inpainted clean-background videos always work.</p>
+      </section>
+
+      <section id="discussion" class="article-section">
+        <h2>5. Discussion and limitations</h2>
+        <p><strong>The thesis partially holds.</strong> A general video model can supply useful missing views for real2sim reconstruction. VR2S improves LPIPS and PSNR on held-out views and gives the object mesh generator evidence for backs and sides the input photo never observed. It does not dominate every metric: OR2S still wins silhouette IoU, and single-view object meshing gives lower Chamfer distance on three of four scenes.</p>
+        <p>The main limitation is fidelity. Veo3 produces plausible orbits, but objects drift, surfaces deform, and lighting changes inconsistently. These artifacts propagate through DA3, SAM2, Hy3D-2mv, TSDF fusion, and ICP. Our evaluation is also small and proxy-based: DA3 and SAM2 produce the held-out trajectory and masks, and there is no real-robot deployment. The output should therefore be read as simulation-oriented reconstruction, not proven simulation readiness. Collision proxies, watertightness, physical scale, material properties, and robot policy transfer remain untested.</p>
+      </section>
+
+      <section id="references" class="article-section references">
+        <h2>References</h2>
+        <p id="ref_rola">[1] S. Zhao, J. Mao, W. Chow, Z. Shangguan, T. Shi, R. Xue, Y. Zheng, Y. Weng, Y. You, D. Seita, L. Guibas, S. Zakharov, V. Guizilini, Y. Wang. <em>Robot Learning from Any Images.</em> CoRL 2025. <a href="https://arxiv.org/abs/2509.22970">arXiv:2509.22970</a>.</p>
+        <p id="ref_or2s">[2] PointsCoder et al. <em>OpenReal2Sim: A Toolbox for Real-to-Sim Reconstruction and Robotic Simulation.</em> 2025. <a href="https://github.com/PointsCoder/OpenReal2Sim">github.com/PointsCoder/OpenReal2Sim</a>.</p>
+        <p id="ref_gen2sim">[3] P. Katara, Z. Xian, K. Fragkiadaki. <em>Gen2Sim: Scaling Up Robot Learning in Simulation with Generative Models.</em> ICRA 2024. <a href="https://arxiv.org/abs/2310.18308">arXiv:2310.18308</a>.</p>
+        <p id="ref_instantmesh">[4] J. Xu, W. Cheng, Y. Gao, X. Wang, S. Gao, Y. Shan. <em>InstantMesh: Efficient 3D Mesh Generation from a Single Image with Sparse-view Large Reconstruction Models.</em> 2024. <a href="https://arxiv.org/abs/2404.07191">arXiv:2404.07191</a>.</p>
+        <p id="ref_splatsim">[5] M. N. Qureshi, S. Garg, F. Yandun, D. Held, G. Kantor, A. Silwal. <em>SplatSim: Zero-Shot Sim2Real Transfer of RGB Manipulation Policies Using Gaussian Splatting.</em> 2024. <a href="https://arxiv.org/abs/2409.10161">arXiv:2409.10161</a>.</p>
+        <p id="ref_moge">[6] R. Wang, S. Xu, C. Dai, J. Xiang, Y. Deng, X. Tong, J. Yang. <em>MoGe: Unlocking Accurate Monocular Geometry Estimation for Open-Domain Images with Optimal Training Supervision.</em> CVPR 2025. <a href="https://arxiv.org/abs/2410.19115">arXiv:2410.19115</a>.</p>
+        <p id="ref_dust3r">[7] S. Wang, V. Leroy, Y. Cabon, B. Chidlovskii, J. Revaud. <em>DUSt3R: Geometric 3D Vision Made Easy.</em> CVPR 2024. <a href="https://arxiv.org/abs/2312.14132">arXiv:2312.14132</a>.</p>
+        <p id="ref_mast3r">[8] V. Leroy, Y. Cabon, J. Revaud. <em>Grounding Image Matching in 3D with MASt3R.</em> ECCV 2024. <a href="https://arxiv.org/abs/2406.09756">arXiv:2406.09756</a>.</p>
+        <p id="ref_vggt">[9] J. Wang, M. Chen, N. Karaev, A. Vedaldi, C. Rupprecht, D. Novotny. <em>VGGT: Visual Geometry Grounded Transformer.</em> CVPR 2025. <a href="https://arxiv.org/abs/2503.11651">arXiv:2503.11651</a>.</p>
+        <p id="ref_da3">[10] H. Lin, S. Chen, J. Liew, D. Y. Chen, Z. Li, G. Shi, J. Feng, B. Kang. <em>Depth Anything 3: Recovering the Visual Space from Any Views.</em> 2025. <a href="https://arxiv.org/abs/2511.10647">arXiv:2511.10647</a>.</p>
+        <p id="ref_wan">[11] Team Wan. <em>Wan: Open and Advanced Large-Scale Video Generative Models.</em> Alibaba, 2025. <a href="https://arxiv.org/abs/2503.20314">arXiv:2503.20314</a>.</p>
+        <p id="ref_cogvideox">[12] Z. Yang, J. Teng, W. Zheng, M. Ding, S. Huang, et al. <em>CogVideoX: Text-to-Video Diffusion Models with An Expert Transformer.</em> ICLR 2025. <a href="https://arxiv.org/abs/2408.06072">arXiv:2408.06072</a>.</p>
+        <p id="ref_veo">[13] Google DeepMind. <em>Veo 3 Technical Report.</em> 2025. <a href="https://deepmind.google/models/veo/">deepmind.google/models/veo</a>.</p>
+        <p id="ref_sv4d">[14] Y. Xie, C.-H. Yao, V. Voleti, H. Jiang, V. Jampani. <em>SV4D: Dynamic 3D Content Generation with Multi-Frame and Multi-View Consistency.</em> 2024. <a href="https://arxiv.org/abs/2407.17470">arXiv:2407.17470</a>.</p>
+        <p id="ref_motionctrl">[15] Z. Wang, Z. Yuan, X. Wang, T. Chen, M. Xia, P. Luo, Y. Shan. <em>MotionCtrl: A Unified and Flexible Motion Controller for Video Generation.</em> SIGGRAPH 2024. <a href="https://arxiv.org/abs/2312.03641">arXiv:2312.03641</a>.</p>
+        <p id="ref_cameractrl">[16] H. He, Y. Xu, Y. Guo, G. Wetzstein, B. Dai, H. Li, C. Yang. <em>CameraCtrl: Enabling Camera Control for Text-to-Video Generation.</em> 2024. <a href="https://arxiv.org/abs/2404.02101">arXiv:2404.02101</a>.</p>
+        <p id="ref_sam2">[17] N. Ravi, V. Gabeur, Y.-T. Hu, R. Hu, C. Ryali, T. Ma, H. Khedr, R. Radle, C. Rolland, L. Gustafson, E. Mintun, J. Pan, K. V. Alwala, N. Carion, C.-Y. Wu, R. Girshick, P. Dollar, C. Feichtenhofer. <em>SAM 2: Segment Anything in Images and Videos.</em> ICLR 2025. <a href="https://arxiv.org/abs/2408.00714">arXiv:2408.00714</a>.</p>
+        <p id="ref_groundingdino">[18] S. Liu, Z. Zeng, T. Ren, F. Li, H. Zhang, J. Yang, C. Li, J. Yang, H. Su, J. Zhu, L. Zhang. <em>Grounding DINO: Marrying DINO with Grounded Pre-Training for Open-Set Object Detection.</em> ECCV 2024. <a href="https://arxiv.org/abs/2303.05499">arXiv:2303.05499</a>.</p>
+        <p id="ref_hy3d2mv">[19] Z. Zhao et al. <em>Hunyuan3D 2.0: Scaling Diffusion Models for High Resolution Textured 3D Assets Generation.</em> Tencent, 2025. <a href="https://arxiv.org/abs/2501.12202">arXiv:2501.12202</a>.</p>
+      </section>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .article-shell {
+    width: min(100%, 1180px);
+    margin: 0 auto;
+    padding: 5rem 1.5rem 6rem;
+    display: grid;
+    grid-template-columns: 13rem minmax(0, 1fr);
+    gap: clamp(2rem, 5vw, 4rem);
+  }
+
+  .article-toc {
+    position: sticky;
+    top: 5.5rem;
+    align-self: start;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    font-size: 0.82rem;
+    line-height: 1.35;
+  }
+
+  .toc-title {
+    margin: 0 0 0.4rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+  }
+
+  .article-toc a {
+    color: var(--text-muted);
+  }
+
+  .article-toc a:hover {
+    color: var(--text-primary);
+  }
+
+  .toc-child {
+    padding-left: 1rem;
+  }
+
+  .article-main {
+    min-width: 0;
+    max-width: 58rem;
+  }
+
+  .article-header {
+    margin-bottom: 2.25rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .article-kicker {
+    margin: 0 0 0.8rem;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--text-muted);
+  }
+
+  .article-header h1 {
+    margin: 0;
+    font-size: clamp(1.6rem, 4vw, 2.2rem);
+    line-height: 1.15;
+    letter-spacing: -0.03em;
+  }
+
+  .article-authors {
+    margin: 1rem 0 0;
+    font-size: 1.05rem;
+    color: var(--text-secondary);
+  }
+
+  .article-section {
+    scroll-margin-top: 5rem;
+    margin-top: 3.25rem;
+  }
+
+  .article-section h2 {
+    margin: 0 0 1rem;
+    font-size: clamp(1.55rem, 3vw, 2rem);
+  }
+
+  .article-section p {
+    margin: 0 0 1rem;
+    color: var(--text-secondary);
+    font-size: 1.12rem;
+    line-height: 1.78;
+  }
+
+  .article-section a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    text-decoration-color: color-mix(in srgb, var(--accent) 40%, transparent);
+  }
+
+  .article-section a:hover {
+    text-decoration-color: var(--accent);
+  }
+
+  figure {
+    margin: 1.5rem 0 1.75rem;
+  }
+
+  img,
+  video {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+  }
+
+  figcaption,
+  .figure-caption,
+  .table-caption {
+    margin: 0.5rem auto 0;
+    color: var(--text-muted);
+    font-size: 0.82rem;
+    line-height: 1.55;
+    text-align: center;
+  }
+
+  .table-caption {
+    display: block;
+    width: 100%;
+    max-width: none;
+    padding: 0 0.5rem;
+    box-sizing: border-box;
+  }
+
+  .teaser-grid,
+  .video-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.5rem;
+    align-items: start;
+  }
+
+  .video-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .teaser-grid figcaption,
+  .video-grid figcaption {
+    margin-bottom: 0.35rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-align: center;
+  }
+
+  .teaser-grid img {
+    height: 17rem;
+    object-fit: cover;
+  }
+
+  .figure-caption {
+    grid-column: 1 / -1;
+  }
+
+  .diagram-figure {
+    overflow-x: auto;
+  }
+
+  .diagram-figure svg {
+    min-width: 680px;
+    width: 100%;
+    font-family: var(--font-serif);
+  }
+
+  .margin-note {
+    margin: 1.25rem 0;
+    padding: 1rem 1.15rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text-secondary);
+    background: var(--bg-card);
+    font-size: 0.95rem;
+    line-height: 1.65;
+  }
+
+  .equation {
+    overflow-x: auto;
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: 0.9rem !important;
+    white-space: nowrap;
+  }
+
+  code {
+    font-size: 0.82em;
+    color: var(--text-primary);
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+    margin: 1rem 0 0.5rem;
+  }
+
+  .table-wrap .table-caption {
+    min-width: 620px;
+  }
+
+  table {
+    width: 100%;
+    min-width: 620px;
+    border-collapse: collapse;
+    color: var(--text-secondary);
+    font-size: 0.86rem;
+  }
+
+  th,
+  td {
+    padding: 0.45rem 0.55rem;
+    text-align: right;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  th:first-child,
+  td:first-child {
+    text-align: left;
+  }
+
+  thead th {
+    border-top: 1px solid var(--text-muted);
+    border-bottom: 1px solid var(--text-muted);
+    color: var(--text-primary);
+    font-weight: 600;
+  }
+
+  tbody tr:last-child td {
+    border-bottom: 1px solid var(--text-muted);
+  }
+
+  td strong {
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  .references p {
+    font-size: 0.92rem;
+    line-height: 1.55;
+  }
+
+  @media (max-width: 960px) {
+    .article-shell {
+      grid-template-columns: 1fr;
+      padding-top: 3.5rem;
+    }
+
+    .article-toc {
+      position: static;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .toc-title {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @media (max-width: 720px) {
+    .teaser-grid,
+    .video-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .teaser-grid img {
+      height: auto;
+    }
+
+    .article-section p {
+      font-size: 1.02rem;
+    }
+  }
+</style>
