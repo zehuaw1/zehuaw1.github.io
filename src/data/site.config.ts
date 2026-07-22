@@ -47,7 +47,7 @@ I think about AI the way a physicist would.`,
 I currently work with <a href="https://people.csail.mit.edu/tommi/" target="_blank" rel="noopener noreferrer">Prof. Tommi Jaakkola</a> on diffusion models and molecular dynamics. Before that, I was at the <a href="https://www.fortyfive.ai" target="_blank" rel="noopener noreferrer">FortyFive AI Lab</a> (Dr. Ge Yang), working on RL and imitation learning for humanoid whole-body control and scaling laws for embodied AI.
 
 Previously, I worked with Prof. Huazhe Xu at Tsinghua University on learning-based robot manipulation and sim-to-real transfer. Before MIT, I completed my freshman year at Tsinghua's Institute for Interdisciplinary Information Sciences (IIIS, Yao Class). I was the 1st place winner in the theoretical round at the 54th International Physics Olympiad (IPhO 2024) and earned 3rd place at the Romanian Master of Physics 2023.`,
-  profileImage: '/images/profile.jpeg',
+  profileImage: '/images/profile-waterfront-full.webp',
   cvUrl: '/files/cv_zehua_wang.pdf',
   socials: [
     { platform: 'github', url: 'https://github.com/zehuaw1', label: 'GitHub' },
