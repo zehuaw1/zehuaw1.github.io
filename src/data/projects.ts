@@ -29,6 +29,11 @@ const projects: Project[] = [
     tags: ['Open Source', 'Python', 'Speech-to-Text', 'Plugins'],
     links: [
       {
+        label: 'Official Repo',
+        url: 'https://github.com/NousResearch/hermes-agent',
+        type: 'project',
+      },
+      {
         label: 'Commits',
         url: 'https://github.com/NousResearch/hermes-agent/commits/main/?author=zehuaw1',
         type: 'code',
