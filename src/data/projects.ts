@@ -20,6 +20,31 @@ export interface ProjectLink {
 
 const projects: Project[] = [
   {
+    slug: 'hermes-agent-contributor',
+    title: 'Open-Source Contributor, Hermes Agent',
+    description:
+      'Authored a three-commit speech-to-text provider-validation patch now in main, adding selected-provider and plugin-backend checks plus tests.',
+    year: '2026',
+    venue: 'NousResearch/Hermes Agent',
+    tags: ['Open Source', 'Python', 'Speech-to-Text', 'Plugins'],
+    links: [
+      {
+        label: 'Commits',
+        url: 'https://github.com/NousResearch/hermes-agent/commits/main/?author=zehuaw1',
+        type: 'code',
+      },
+      {
+        label: 'Review',
+        url: 'https://github.com/NousResearch/hermes-agent/pull/41657',
+        type: 'other',
+      },
+    ],
+    featured: true,
+    longDescription: `I authored a three-commit patch that strengthens speech-to-text provider validation in NousResearch/Hermes Agent. The changes make voice-requirement checks recognize selected providers and plugin-backed speech-to-text implementations, with tests covering the new behavior.
+
+The contribution is now part of the repository's main branch with authorship preserved. The links above lead to the filtered main-branch history and the maintainer review that incorporated the patch.`,
+  },
+  {
     slug: 'video-real2sim',
     title: 'Video Real2Sim (VR2S)',
     description:
@@ -41,7 +66,7 @@ This was my final project for MIT 6.8300 Advances in Computer Vision.`,
     slug: 'humanoid-flow-matching',
     title: 'Fast Humanoid Loco-Manipulation via Flow Matching',
     description:
-      'Flow Matching achieves 820 vs. 280 survival steps over DDPM at 5-NFE. Zero-shot loco-manipulation from walking-only data via classifier guidance.',
+      'Compared DDPM and Flow Matching for humanoid trajectory synthesis; at five function evaluations, Flow Matching achieved 820 vs. 280 survival steps.',
     year: '2025',
     venue: 'MIT 6.4210',
     tags: ['RL', 'Humanoid Control', 'Flow Matching', 'PyTorch'],
@@ -50,21 +75,32 @@ This was my final project for MIT 6.8300 Advances in Computer Vision.`,
       { label: 'Video', url: 'https://youtu.be/MIpTpM4C71k', type: 'video' },
     ],
     featured: true,
-    longDescription: `Compared DDPM and Flow Matching for humanoid control via trajectory synthesis, achieving faster inference with FM. At 5-NFE, FM achieves 820 vs. 280 survival steps. Zero-shot loco-manipulation from walking-only data via test-time classifier guidance.`,
+    longDescription: `Compared DDPM and Flow Matching for humanoid control via trajectory synthesis. At five function evaluations, Flow Matching achieved 820 vs. 280 survival steps. The project also enabled zero-shot loco-manipulation from walking-only data through test-time classifier guidance.`,
   },
   {
     slug: 'rl-vs-sft-math',
     title: 'RL vs. SFT for Mathematical Reasoning in LLMs',
     description:
-      'GMPO achieves 74.2% on GSM8K (vs. SFT 76.7%), demonstrating RL can match SFT without step-by-step supervision.',
+      'Implemented GMPO and its evaluation pipeline for a compute-controlled comparison of PPO, GRPO, GMPO, RLOO, and SFT on Qwen3-8B.',
     year: '2025',
     venue: 'MIT 6.4610',
     tags: ['RL', 'LLM', 'Math Reasoning', 'GMPO'],
     links: [
-      { label: 'Code', url: 'https://github.com/qiaosungithub/Qwen-RL-LoRA', type: 'code' },
+      {
+        label: 'Code',
+        url: 'https://github.com/qiaosungithub/Qwen-RL-LoRA/tree/zehua/GMPO',
+        type: 'code',
+      },
+      {
+        label: 'My Commits',
+        url: 'https://github.com/qiaosungithub/Qwen-RL-LoRA/commits/zehua/GMPO/?author=zehuaw1',
+        type: 'other',
+      },
     ],
     featured: true,
-    longDescription: `Compute-controlled comparison of PPO, GRPO, GMPO, RLOO against SFT on Qwen3-8B. GMPO achieves 74.2% on GSM8K (vs. SFT 76.7%), demonstrating RL can match SFT without step-by-step supervision.`,
+    longDescription: `In an MIT 6.4610 team project, we ran a compute-controlled comparison of PPO, GRPO, GMPO, and RLOO against supervised fine-tuning on Qwen3-8B. My contribution was implementing GMPO and its evaluation pipeline.
+
+GMPO reached 74.2% on GSM8K versus 76.7% for supervised fine-tuning. The named branch and filtered commit history provide direct evidence of my implementation work.`,
   },
   {
     slug: 'diffusion-rl-adversarial',
@@ -76,7 +112,6 @@ This was my final project for MIT 6.8300 Advances in Computer Vision.`,
     links: [
       { label: 'Code & Report', url: 'https://github.com/HACLINE/DiffPPOGAN', type: 'code' },
     ],
-    featured: true,
     longDescription: `Formulated reverse diffusion as MDP with adversarial discriminators, achieving 21.7% FID reduction vs. baseline. Plug-and-play for existing models.`,
   },
   {

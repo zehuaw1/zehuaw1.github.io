@@ -1,0 +1,127 @@
+---
+import type { Publication } from '../data/publications';
+
+interface Props {
+  publications: Publication[];
+}
+
+const { publications } = Astro.props;
+---
+
+<div class="publication-list">
+  {publications.map((publication) => (
+    <article class="publication-item">
+      <h3 class="publication-title">{publication.title}</h3>
+      <p class="publication-authors">
+        {publication.authors.map((author, index) => (
+          <>
+            {index > 0 && ', '}
+            <span class:list={[{ 'author-self': author.name === 'Zehua Wang' }]}>
+              {author.name}{author.equalContribution && <sup>*</sup>}
+            </span>
+          </>
+        ))}
+      </p>
+      <div class="publication-meta-row">
+        <p class="publication-meta">
+          <em>{publication.venue}</em> · {publication.status}
+        </p>
+        {publication.links && publication.links.length > 0 && (
+          <div class="publication-links">
+            {publication.links.map((link) => (
+              <a href={link.url} target="_blank" rel="noopener noreferrer">
+                {link.label} ↗
+              </a>
+            ))}
+          </div>
+        )}
+      </div>
+      {publication.note && <p class="publication-note">{publication.note}</p>}
+    </article>
+  ))}
+</div>
+
+<style>
+  .publication-list {
+    max-width: 54rem;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .publication-item {
+    padding: 1.15rem 0;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .publication-item:first-child {
+    padding-top: 0;
+  }
+
+  .publication-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .publication-title {
+    margin: 0 0 0.4rem;
+    color: var(--text-primary);
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.45;
+    letter-spacing: -0.015em;
+  }
+
+  .publication-authors {
+    margin: 0 0 0.38rem;
+    color: var(--text-secondary);
+    font-size: 0.86rem;
+    line-height: 1.55;
+  }
+
+  .author-self {
+    color: var(--text-primary);
+    font-weight: 700;
+  }
+
+  sup {
+    font-size: 0.65em;
+    line-height: 0;
+  }
+
+  .publication-meta-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.75rem 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .publication-meta {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    line-height: 1.5;
+  }
+
+  .publication-links {
+    display: flex;
+    gap: 0.8rem;
+  }
+
+  .publication-links a {
+    color: var(--accent);
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .publication-links a:hover {
+    color: var(--accent-hover);
+  }
+
+  .publication-note {
+    margin: 0.35rem 0 0;
+    color: var(--text-muted);
+    font-size: 0.72rem;
+  }
+</style>

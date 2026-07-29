@@ -3,10 +3,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import SectionHeading from '../components/SectionHeading.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import FeaturedLead from '../components/FeaturedLead.astro';
+import PublicationList from '../components/PublicationList.astro';
 import HeroAnimation from '../components/HeroAnimation.tsx';
 import ScrollFadeIn from '../components/ScrollFadeIn.tsx';
 import siteConfig from '../data/site.config';
 import projects from '../data/projects';
+import publications from '../data/publications';
 import { getSocialIcon } from '../utils/helpers';
 
 const featuredProjects = projects.filter((p) => p.featured).slice(0, 3);
@@ -131,13 +133,30 @@ try {
 
   <hr class="section-divider" />
 
+  <section class="section" id="publications">
+    <div class="container">
+      <ScrollFadeIn client:visible>
+        <SectionHeading
+          title="Publications"
+          subtitle="Published and presented research"
+          index="02"
+        />
+      </ScrollFadeIn>
+      <ScrollFadeIn client:visible delay={0.08}>
+        <PublicationList publications={publications} />
+      </ScrollFadeIn>
+    </div>
+  </section>
+
+  <hr class="section-divider" />
+
   <section class="section">
     <div class="container">
       <ScrollFadeIn client:visible>
         <SectionHeading
           title="Featured Projects"
           subtitle="Selected research projects and open-source work"
-          index="02"
+          index="03"
         />
       </ScrollFadeIn>
       <div class="featured-stack">
@@ -169,7 +188,7 @@ try {
   <section class="section">
     <div class="container">
       <ScrollFadeIn client:visible>
-        <SectionHeading title="News" subtitle="Recent updates and announcements" index="03" />
+        <SectionHeading title="News" subtitle="Recent updates and announcements" index="04" />
       </ScrollFadeIn>
       <div class="news-list">
         {siteConfig.news.map((item, i) => (

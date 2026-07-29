@@ -12,18 +12,25 @@ const skills: SkillCategory[] = [
   {
     category: 'Programming',
     skills: [
-      { name: 'Python (PyTorch)', level: 'expert' },
+      { name: 'Python', level: 'expert' },
       { name: 'C++', level: 'proficient' },
     ],
   },
   {
-    category: 'Tools',
+    category: 'ML / Robotics',
     skills: [
-      { name: 'LaTeX', level: 'proficient' },
-      { name: 'Git', level: 'proficient' },
-      { name: 'Linux', level: 'proficient' },
+      { name: 'PyTorch', level: 'expert' },
       { name: 'MuJoCo', level: 'proficient' },
-      { name: 'Isaac Gym/Lab', level: 'familiar' },
+      { name: 'Isaac Gym', level: 'proficient' },
+      { name: 'Isaac Lab', level: 'proficient' },
+    ],
+  },
+  {
+    category: 'Systems',
+    skills: [
+      { name: 'Slurm', level: 'proficient' },
+      { name: 'Docker', level: 'proficient' },
+      { name: 'Linux', level: 'proficient' },
     ],
   },
   {

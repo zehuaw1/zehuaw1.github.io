@@ -3,10 +3,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import SectionHeading from '../components/SectionHeading.astro';
 import Timeline from '../components/Timeline.astro';
 import Badge from '../components/Badge.astro';
+import PublicationList from '../components/PublicationList.astro';
 import ScrollFadeIn from '../components/ScrollFadeIn.tsx';
 import siteConfig from '../data/site.config';
 import education from '../data/education';
 import experience from '../data/experience';
+import publications from '../data/publications';
 import awards from '../data/awards';
 import skills from '../data/skills';
 import courses from '../data/courses';
@@ -36,6 +38,7 @@ const experienceItems = experience.map((e) => ({
   location: e.location,
   description: e.description,
   bullets: e.bullets,
+  links: e.links,
 }));
 
 const levelColor: Record<string, 'accent' | 'default' | 'muted'> = {
@@ -76,6 +79,13 @@ const levelColor: Record<string, 'accent' | 'default' | 'muted'> = {
         <div class="cv-section">
           <h2 class="cv-section-title">Experience</h2>
           <Timeline items={experienceItems} />
+        </div>
+      </ScrollFadeIn>
+
+      <ScrollFadeIn client:visible>
+        <div class="cv-section">
+          <h2 class="cv-section-title">Publications</h2>
+          <PublicationList publications={publications} />
         </div>
       </ScrollFadeIn>
 

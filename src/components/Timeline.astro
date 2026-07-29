@@ -7,6 +7,7 @@ interface TimelineItem {
   bullets?: string[];
   location?: string;
   badge?: string;
+  links?: { label: string; url: string }[];
 }
 
 interface Props {
@@ -61,6 +62,16 @@ const { items } = Astro.props;
               <li>{bullet}</li>
             ))}
           </ul>
+        )}
+
+        {item.links && item.links.length > 0 && (
+          <div class="timeline-links">
+            {item.links.map((link) => (
+              <a href={link.url} target="_blank" rel="noopener noreferrer">
+                {link.label} ↗
+              </a>
+            ))}
+          </div>
         )}
       </div>
     </li>
@@ -202,5 +213,23 @@ const { items } = Astro.props;
     position: absolute;
     left: 0;
     color: var(--text-muted);
+  }
+
+  .timeline-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    margin-top: 0.55rem;
+  }
+
+  .timeline-links a {
+    color: var(--accent);
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .timeline-links a:hover {
+    color: var(--accent-hover);
   }
 </style>

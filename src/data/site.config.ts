@@ -36,17 +36,17 @@ const siteConfig: SiteConfig = {
     'MIT undergraduate in Physics & AI. IPhO 2024 Gold Medalist (1st in Theory). Research in reinforcement learning, humanoid control, and embodied AI.',
   url: 'https://zehuaw1.github.io',
   email: 'zehuaw@mit.edu',
-  tagline: `Sophomore @ MIT
+  tagline: `MIT Undergraduate
 I think about AI the way a physicist would.`,
   highlightWords: ['AI the way a physicist would'],
   heroTags: ['MIT', 'IPhO Gold', 'RL & Robotics'],
   shortBio:
     "I'm an undergraduate at MIT studying Physics and AI/Decision Making. My research focuses on diffusion models, molecular dynamics, and reinforcement learning for embodied AI.",
-  bio: `I'm Zehua Wang (<span class="zh-serif">王泽华</span>), an undergraduate at MIT pursuing a B.S. in Physics and Artificial Intelligence & Decision Making (GPA: 5.0/5.0). My work sits at the intersection of physics and AI: from reinforcement learning for humanoid control, to diffusion models and molecular dynamics.
+  bio: `I'm Zehua Wang (<span class="zh-serif">王泽华</span>), an undergraduate at MIT pursuing a B.S. in Physics and Artificial Intelligence & Decision Making (GPA: 5.0/5.0; expected May 2028). My work sits at the intersection of physics and AI: from reinforcement learning for humanoid control to diffusion models and molecular dynamics.
 
-I currently work with <a href="https://people.csail.mit.edu/tommi/" target="_blank" rel="noopener noreferrer">Prof. Tommi Jaakkola</a> on diffusion models and molecular dynamics. Before that, I was at the <a href="https://www.fortyfive.ai" target="_blank" rel="noopener noreferrer">FortyFive AI Lab</a> (Dr. Ge Yang), working on RL and imitation learning for humanoid whole-body control and scaling laws for embodied AI.
+At MIT, I co-developed Diffusion Accelerants with <a href="https://people.csail.mit.edu/tommi/" target="_blank" rel="noopener noreferrer">Prof. Tommi Jaakkola</a>'s group. At <a href="https://www.fortyfive.ai" target="_blank" rel="noopener noreferrer">FortyFive Labs</a>, advised by Dr. Ge Yang, I worked on reinforcement learning, functional compliance, and sim-to-real humanoid control on Unitree G1 hardware. In summer 2026, I joined Hudson River Trading for rotations in algorithm development and software engineering.
 
-Previously, I worked with Prof. Huazhe Xu at Tsinghua University on learning-based robot manipulation and sim-to-real transfer. Before MIT, I completed my freshman year at Tsinghua's Institute for Interdisciplinary Information Sciences (IIIS, Yao Class). I was the 1st place winner in the theoretical round at the 54th International Physics Olympiad (IPhO 2024) and earned 3rd place at the Romanian Master of Physics 2023.`,
+Previously, I worked with Prof. Huazhe Xu at Tsinghua University on learning-based robot manipulation and sim-to-real transfer. Before MIT, I completed preparatory and first-year coursework at Tsinghua's Institute for Interdisciplinary Information Sciences (IIIS). I won a gold medal and placed first in theory at the 54th International Physics Olympiad (IPhO 2024).`,
   profileImage: '/images/profile-waterfront-full.webp',
   cvUrl: '/files/cv_zehua_wang.pdf',
   socials: [
@@ -66,8 +66,22 @@ Previously, I worked with Prof. Huazhe Xu at Tsinghua University on learning-bas
   beyondAcademics: `Outside of research, I'm into basketball (led the IIIS team as a freshman), skiing (10+ years), and lifting. I also enjoy soccer, volleyball, table tennis, swimming, and hiking. In my spare time, I listen to music and occasionally sing.`,
   news: [
     {
+      date: 'Jul 2026',
+      text: 'Contributed a three-commit speech-to-text provider-validation patch now in NousResearch/Hermes Agent\'s main branch.',
+      link: '/projects/hermes-agent-contributor',
+    },
+    {
+      date: 'Jul 2026',
+      text: 'Presented Diffusion Accelerants as a poster at the SPIGM Workshop at ICML 2026.',
+      link: 'https://openreview.net/forum?id=ssjcTBZdQd',
+    },
+    {
+      date: 'May 2026',
+      text: 'Joined Hudson River Trading for algorithm development and software engineering rotations.',
+    },
+    {
       date: 'Feb 2026',
-      text: 'Started working with Prof. Tommi Jaakkola on diffusion models & molecular dynamics.',
+      text: 'Started working with Prof. Tommi Jaakkola\'s group on diffusion models and molecular dynamics.',
     },
     {
       date: 'Dec 2025',
@@ -75,7 +89,7 @@ Previously, I worked with Prof. Huazhe Xu at Tsinghua University on learning-bas
     },
     {
       date: 'Oct 2025',
-      text: 'Joined the FortyFive AI Lab (Dr. Ge Yang). RL & embodied AI.',
+      text: 'Joined FortyFive Labs (Dr. Ge Yang) to work on reinforcement learning and embodied AI.',
     },
     {
       date: 'Sep 2025',

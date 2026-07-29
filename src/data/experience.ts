@@ -6,49 +6,55 @@ export interface Experience {
   location: string;
   description?: string;
   bullets?: string[];
+  links?: { label: string; url: string }[];
 }
 
 const experience: Experience[] = [
   {
-    role: 'Software Engineering Intern',
+    role: 'Sophomore Intern: Algorithm Development & Software Engineering',
     organization: 'Hudson River Trading',
     startDate: 'May 2026',
     endDate: 'Aug 2026',
     location: 'New York, NY',
     bullets: [
-      'Two rotations: Software Engineering (5 weeks) and Algorithmic Trading (5 weeks).',
+      'Developed and live-tested a trading strategy during the Algorithm Development rotation.',
+      "Contributed enhancements to internal developer tooling in HRT's codebase during the Software Engineering rotation.",
     ],
   },
   {
     role: 'Undergraduate Researcher: Diffusion Models & Molecular Dynamics',
-    organization: 'MIT, supervised by Prof. Tommi Jaakkola',
+    organization: 'MIT · Advisor: Tommi Jaakkola',
     startDate: 'Feb 2026',
-    endDate: 'Present',
+    endDate: 'May 2026',
     location: 'Cambridge, MA',
     bullets: [
-      'Researching the intersection of diffusion models and molecular dynamics.',
+      'Co-developed Diffusion Accelerants, a non-Markovian biasing method that augments molecular dynamics with learned measure transport.',
     ],
   },
   {
     role: 'Undergraduate Researcher: Reinforcement Learning & Embodied AI',
-    organization: 'FortyFive AI Lab, MIT, supervised by Dr. Ge Yang',
+    organization: 'FortyFive Labs · Advisor: Ge Yang',
     startDate: 'Oct 2025',
     endDate: 'Apr 2026',
     location: 'Cambridge, MA',
     bullets: [
-      'Developed RL and imitation learning pipelines for humanoid whole-body control; investigated scaling laws for policy performance and generalization.',
-      'Contributed to productionization of Vuer (3D visualization) and ML-Dash (experiment tracking & data storage).',
+      'Developed a whole-body control policy for functional compliance, combining explicit force estimation with directional, time-varying stiffness profiles at deployment.',
+      'Ran parallel RL and imitation-learning experiments across nearly 100 NVIDIA RTX PRO 6000 GPUs; performed extensive sim-to-real deployment, debugging, and policy iteration on Unitree G1 hardware.',
+      'Contributed code to Vuer, a 3D visualization toolkit, and ML-Dash, an experiment-tracking and data platform.',
+    ],
+    links: [
+      { label: 'Vuer', url: 'https://vuer.ai/' },
+      { label: 'ML-Dash', url: 'https://dash.ml/' },
     ],
   },
   {
     role: 'Undergraduate Researcher: Learning-based Control',
-    organization: 'Tsinghua University, supervised by Prof. Huazhe Xu',
+    organization: 'Tsinghua University · Advisor: Huazhe Xu',
     startDate: 'Mar 2025',
     endDate: 'Aug 2025',
     location: 'Beijing, China',
     bullets: [
-      'Investigated RIR (RL to Imitation to Real-world) framework for robot manipulation on Franka arm, leveraging PPO and DrQ-v2.',
-      'Designed multi-stage approach for specialist training and multitask generalization via imitation learning and sim-to-real transfer.',
+      'Developed a multistage RIR (RL-to-imitation-to-real-world) pipeline for Franka manipulation, combining PPO/DrQ-v2 specialists, multitask imitation learning, and sim-to-real transfer.',
     ],
   },
 ];
