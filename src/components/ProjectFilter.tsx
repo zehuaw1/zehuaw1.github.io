@@ -9,6 +9,7 @@ interface Project {
   tags: string[];
   year: number;
   featured: boolean;
+  titleLink?: { text: string; url: string };
   links: Array<{ type: string; url: string; label?: string }>;
 }
 
@@ -76,9 +77,29 @@ export default function ProjectFilter({ projects }: ProjectFilterProps) {
               </div>
 
               <div className="row-body">
-                <a href={`/projects/${project.slug}`} className="row-title-link">
-                  <h3 className="row-title">{project.title}</h3>
-                </a>
+                <h3 className="row-title">
+                  {project.titleLink && project.title.includes(project.titleLink.text) ? (
+                    project.title.split(project.titleLink.text).map((part, index, parts) => (
+                      <span key={`${project.slug}-title-${index}`}>
+                        {part}
+                        {index < parts.length - 1 && (
+                          <a
+                            href={project.titleLink?.url}
+                            className="row-title-external"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {project.titleLink?.text}
+                          </a>
+                        )}
+                      </span>
+                    ))
+                  ) : (
+                    <a href={`/projects/${project.slug}`} className="row-title-link">
+                      {project.title}
+                    </a>
+                  )}
+                </h3>
 
                 <p className="row-desc">{project.description}</p>
 
@@ -223,8 +244,8 @@ export default function ProjectFilter({ projects }: ProjectFilterProps) {
           min-width: 0;
         }
         .row-title-link {
+          color: inherit;
           text-decoration: none;
-          align-self: flex-start;
         }
         .row-title {
           font-size: 1.15rem;
@@ -235,8 +256,17 @@ export default function ProjectFilter({ projects }: ProjectFilterProps) {
           margin: 0;
           transition: color 0.15s ease;
         }
-        .row-title-link:hover .row-title {
+        .row-title-link:hover,
+        .row-title-external:hover {
           color: var(--accent);
+        }
+        .row-title-external {
+          color: inherit;
+          text-decoration: underline;
+          text-decoration-thickness: 1px;
+          text-underline-offset: 0.16em;
+          text-decoration-color: color-mix(in srgb, currentColor 35%, transparent);
+          transition: color 0.15s ease;
         }
         .row-desc {
           font-size: 0.95rem;

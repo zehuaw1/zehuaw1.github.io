@@ -54,7 +54,24 @@ const iconMap: Record<string, string> = {
             )}
             {project.featured && <span class="project-featured">Featured</span>}
           </div>
-          <h1 class="project-title">{project.title}</h1>
+          <h1 class="project-title">
+            {project.titleLink && project.title.includes(project.titleLink.text) ? (
+              project.title.split(project.titleLink.text).map((part, index, parts) => (
+                <>
+                  {part}
+                  {index < parts.length - 1 && (
+                    <a
+                      href={project.titleLink?.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {project.titleLink?.text}
+                    </a>
+                  )}
+                </>
+              ))
+            ) : project.title}
+          </h1>
           <p class="project-short-desc">{project.description}</p>
 
           <div class="project-links">
@@ -79,7 +96,24 @@ const iconMap: Record<string, string> = {
         <div class="project-body">
           <div class="prose-content">
             {(project.longDescription || project.content || project.description).split('\n\n').map((paragraph) => (
-              <p>{paragraph.trim()}</p>
+              <p>
+                {project.descriptionLink && paragraph.includes(project.descriptionLink.text) ? (
+                  paragraph.split(project.descriptionLink.text).map((part, index, parts) => (
+                    <>
+                      {part}
+                      {index < parts.length - 1 && (
+                        <a
+                          href={project.descriptionLink?.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {project.descriptionLink?.text}
+                        </a>
+                      )}
+                    </>
+                  ))
+                ) : paragraph.trim()}
+              </p>
             ))}
           </div>
         </div>
@@ -164,6 +198,19 @@ const iconMap: Record<string, string> = {
     letter-spacing: -0.03em;
     line-height: 1.15;
     margin-bottom: 1rem;
+  }
+
+  .project-title a {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.16em;
+    text-decoration-color: color-mix(in srgb, currentColor 35%, transparent);
+    transition: color 0.15s ease;
+  }
+
+  .project-title a:hover {
+    color: var(--accent);
   }
 
   .project-short-desc {

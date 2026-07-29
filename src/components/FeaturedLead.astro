@@ -38,11 +38,46 @@ const description = project.longDescription ?? project.description;
     <span class="lead-marker">Lead</span>
   </div>
 
-  <a href={`/projects/${project.slug}`} class="lead-title-link">
-    <h3 class="lead-title">{project.title}</h3>
-  </a>
+  <h3 class="lead-title">
+    {project.titleLink && project.title.includes(project.titleLink.text) ? (
+      project.title.split(project.titleLink.text).map((part, index, parts) => (
+        <>
+          {part}
+          {index < parts.length - 1 && (
+            <a
+              href={project.titleLink?.url}
+              class="lead-title-external"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {project.titleLink?.text}
+            </a>
+          )}
+        </>
+      ))
+    ) : (
+      <a href={`/projects/${project.slug}`} class="lead-title-link">{project.title}</a>
+    )}
+  </h3>
 
-  <p class="lead-description">{description}</p>
+  <p class="lead-description">
+    {project.descriptionLink && description.includes(project.descriptionLink.text) ? (
+      description.split(project.descriptionLink.text).map((part, index, parts) => (
+        <>
+          {part}
+          {index < parts.length - 1 && (
+            <a
+              href={project.descriptionLink?.url}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {project.descriptionLink?.text}
+            </a>
+          )}
+        </>
+      ))
+    ) : description}
+  </p>
 
   <div class="lead-footer">
     <div class="lead-tags">
@@ -121,6 +156,7 @@ const description = project.longDescription ?? project.description;
   }
 
   .lead-title-link {
+    color: inherit;
     text-decoration: none;
   }
 
@@ -134,8 +170,18 @@ const description = project.longDescription ?? project.description;
     transition: color 0.15s ease;
   }
 
-  .lead-title-link:hover .lead-title {
+  .lead-title-link:hover,
+  .lead-title-external:hover {
     color: var(--accent);
+  }
+
+  .lead-title-external {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.16em;
+    text-decoration-color: color-mix(in srgb, currentColor 35%, transparent);
+    transition: color 0.15s ease;
   }
 
   .lead-description {
@@ -144,6 +190,16 @@ const description = project.longDescription ?? project.description;
     line-height: 1.65;
     margin: 0;
     max-width: 60ch;
+  }
+
+  .lead-description a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .lead-description a:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.14em;
   }
 
   .lead-footer {

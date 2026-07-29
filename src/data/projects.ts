@@ -5,12 +5,19 @@ export interface Project {
   year: string;
   venue?: string;
   venueUrl?: string;
+  titleLink?: ProjectTextLink;
+  descriptionLink?: ProjectTextLink;
   tags: string[];
   links: ProjectLink[];
   featured?: boolean;
   thumbnail?: string;
   content?: string;
   longDescription?: string;
+}
+
+export interface ProjectTextLink {
+  text: string;
+  url: string;
 }
 
 export interface ProjectLink {
@@ -28,6 +35,14 @@ const projects: Project[] = [
     year: '2026',
     venue: 'NousResearch/Hermes Agent',
     venueUrl: 'https://github.com/NousResearch/hermes-agent',
+    titleLink: {
+      text: 'Hermes Agent',
+      url: 'https://github.com/NousResearch/hermes-agent',
+    },
+    descriptionLink: {
+      text: 'NousResearch/Hermes Agent',
+      url: 'https://github.com/NousResearch/hermes-agent',
+    },
     tags: ['Open Source', 'Python', 'Speech-to-Text', 'Plugins'],
     links: [
       {
