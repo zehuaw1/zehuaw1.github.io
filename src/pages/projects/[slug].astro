@@ -38,6 +38,20 @@ const iconMap: Record<string, string> = {
         <div class="project-header">
           <div class="project-meta">
             <span class="project-year">{project.year}</span>
+            {project.venue && (
+              project.venueUrl ? (
+                <a
+                  href={project.venueUrl}
+                  class="project-venue"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {project.venue}
+                </a>
+              ) : (
+                <span class="project-venue">{project.venue}</span>
+              )
+            )}
             {project.featured && <span class="project-featured">Featured</span>}
           </div>
           <h1 class="project-title">{project.title}</h1>
@@ -124,6 +138,18 @@ const iconMap: Record<string, string> = {
     font-weight: 500;
     font-family: var(--font-mono);
     color: var(--text-muted);
+  }
+
+  .project-venue {
+    font-size: 0.8rem;
+    font-style: italic;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+
+  a.project-venue:hover {
+    color: var(--accent);
   }
 
   .project-featured {

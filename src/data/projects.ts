@@ -4,6 +4,7 @@ export interface Project {
   description: string;
   year: string;
   venue?: string;
+  venueUrl?: string;
   tags: string[];
   links: ProjectLink[];
   featured?: boolean;
@@ -26,13 +27,9 @@ const projects: Project[] = [
       'Authored a three-commit speech-to-text provider-validation patch now in main, adding selected-provider and plugin-backend checks plus tests.',
     year: '2026',
     venue: 'NousResearch/Hermes Agent',
+    venueUrl: 'https://github.com/NousResearch/hermes-agent',
     tags: ['Open Source', 'Python', 'Speech-to-Text', 'Plugins'],
     links: [
-      {
-        label: 'Official Repo',
-        url: 'https://github.com/NousResearch/hermes-agent',
-        type: 'project',
-      },
       {
         label: 'Commits',
         url: 'https://github.com/NousResearch/hermes-agent/commits/main/?author=zehuaw1',
