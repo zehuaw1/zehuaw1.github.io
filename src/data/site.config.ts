@@ -47,7 +47,7 @@ I think about AI the way a physicist would.`,
 At MIT, I co-developed Diffusion Accelerants with <a href="https://people.csail.mit.edu/tommi/" target="_blank" rel="noopener noreferrer">Prof. Tommi Jaakkola</a>'s group. At <a href="https://www.fortyfive.ai" target="_blank" rel="noopener noreferrer">FortyFive Labs</a>, advised by Dr. Ge Yang, I worked on reinforcement learning, functional compliance, and sim-to-real humanoid control on Unitree G1 hardware. In summer 2026, I joined Hudson River Trading for rotations in algorithm development and software engineering.
 
 Previously, I worked with Prof. Huazhe Xu at Tsinghua University on learning-based robot manipulation and sim-to-real transfer. Before MIT, I completed preparatory and first-year coursework at Tsinghua's Institute for Interdisciplinary Information Sciences (IIIS). I won a gold medal and placed first in theory at the 54th International Physics Olympiad (IPhO 2024).`,
-  profileImage: '/images/profile-waterfront-full.webp',
+  profileImage: '/images/profile-waterfront-20260730.webp',
   cvUrl: '/files/cv_zehua_wang.pdf',
   socials: [
     { platform: 'github', url: 'https://github.com/zehuaw1', label: 'GitHub' },
