@@ -66,6 +66,11 @@ Previously, I worked with Prof. Huazhe Xu at Tsinghua University on learning-bas
   beyondAcademics: `Outside of research, I'm into basketball (led the IIIS team as a freshman), skiing (10+ years), and lifting. I also enjoy soccer, volleyball, table tennis, swimming, and hiking. In my spare time, I listen to music and occasionally sing.`,
   news: [
     {
+      date: 'Sep 2026',
+      text: 'Learning Functional Compliance in Whole-body Manipulation was accepted to CoRL 2026.',
+      link: 'https://openreview.net/forum?id=wALhOwQWnx',
+    },
+    {
       date: 'Jul 2026',
       text: 'Contributed a three-commit speech-to-text provider-validation patch now in NousResearch/Hermes Agent\'s main branch.',
       link: '/projects/hermes-agent-contributor',

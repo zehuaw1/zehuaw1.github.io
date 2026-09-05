@@ -20,6 +20,29 @@ export interface Publication {
 
 const publications: Publication[] = [
   {
+    title: 'Learning Functional Compliance in Whole-body Manipulation',
+    authors: [
+      { name: 'Gio Huh', equalContribution: true },
+      { name: 'Yue Zhuo', equalContribution: true },
+      { name: 'Zehua Wang', equalContribution: true },
+      { name: 'Alan Yu' },
+      { name: 'Yibo Cheng' },
+      { name: 'Yanbing Han' },
+      { name: 'Gabriel B. Margolis' },
+      { name: 'Ge Yang' },
+    ],
+    venue: 'Conference on Robot Learning (CoRL)',
+    year: '2026',
+    status: 'Accepted paper',
+    links: [
+      {
+        label: 'OpenReview',
+        url: 'https://openreview.net/forum?id=wALhOwQWnx',
+      },
+    ],
+    note: '* Equal contribution.',
+  },
+  {
     title: 'Diffusion Accelerants: Towards Augmenting Molecular Dynamics with Learned Measure Transport',
     authors: [
       { name: 'Bowen Jing' },

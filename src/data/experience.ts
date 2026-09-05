@@ -40,11 +40,6 @@ const experience: Experience[] = [
     bullets: [
       'Developed a whole-body control policy for functional compliance, combining explicit force estimation with directional, time-varying stiffness profiles at deployment.',
       'Ran parallel RL and imitation-learning experiments across nearly 100 NVIDIA RTX PRO 6000 GPUs; performed extensive sim-to-real deployment, debugging, and policy iteration on Unitree G1 hardware.',
-      'Contributed code to Vuer, a 3D visualization toolkit, and ML-Dash, an experiment-tracking and data platform.',
-    ],
-    links: [
-      { label: 'Vuer', url: 'https://vuer.ai/' },
-      { label: 'ML-Dash', url: 'https://dash.ml/' },
     ],
   },
   {

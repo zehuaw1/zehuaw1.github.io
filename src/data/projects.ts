@@ -51,8 +51,8 @@ const projects: Project[] = [
         type: 'code',
       },
       {
-        label: 'Review',
-        url: 'https://github.com/NousResearch/hermes-agent/pull/41657',
+        label: 'Merged PR',
+        url: 'https://github.com/NousResearch/hermes-agent/pull/73510',
         type: 'other',
       },
     ],
