@@ -50,3 +50,63 @@ CC BY 4.0; trimmed, resized, audio removed.
 dog.mp4 and dog.jpg: "A Happy Dog on a Papuan Beach" by Joaquim Baeta
 https://scenoptica.com/footage/a-happy-dog-on-a-papuan-beach.html
 CC BY 4.0; trimmed, resized, audio removed.
+
+bulbul.mp4 and bulbul.jpg: "Pycnonotus goiavier (yellow-vented bulbul)" by Joaquim Baeta
+https://scenoptica.com/footage/pycnonotus-goiavier.html
+CC BY 4.0; source clip 1, trimmed to 7.42 seconds, resized, audio removed.
+The source was captured at 23.976 fps; playback timing is preserved.
+
+watersnake.mp4 and watersnake.jpg: "Homalopsis buccata" by Joaquim Baeta
+https://scenoptica.com/footage/homalopsis-buccata.html
+CC BY 4.0; 8-second excerpt beginning at 5 seconds, resized, audio removed.
+The source was captured at 25 fps; playback timing is preserved.
+
+merapi.mp4 and merapi.jpg: "Mount Merapi Landscape" by Joaquim Baeta
+https://scenoptica.com/footage/mount-merapi-landscape.html
+CC BY 4.0; 8-second excerpt beginning at 5 seconds, resized, audio removed.
+The source was captured at 25 fps; playback timing is preserved.
+
+sunset.mp4 and sunset.jpg: "Orange Sunset, Two" by Joaquim Baeta
+https://scenoptica.com/footage/orange-sunset-two.html
+CC BY 4.0; 8-second excerpt beginning at 8 seconds, resized, audio removed.
+The source was captured at 25 fps; playback timing is preserved.
+
+sheep.mp4 and sheep.jpg: "The Sheep of Stonehenge" by Joaquim Baeta
+https://scenoptica.com/footage/the-sheep-of-stonehenge.html
+CC BY 4.0; 8-second excerpt beginning at 20 seconds, resized, audio removed.
+The source was captured at 23.976 fps; playback timing is preserved.
+
+butterfly.mp4 and butterfly.jpg: "Butterfly amongst Vegetation, One" by Joaquim Baeta
+https://scenoptica.com/footage/butterfly-amongst-vegetation-one.html
+CC BY 4.0; 8-second excerpt beginning at 8 seconds, resized, audio removed.
+The source was captured at 25 fps; playback timing is preserved.
+
+students.mp4 and students.jpg: "Twin with Students and Rury in Background" by Joaquim Baeta
+https://scenoptica.com/footage/twin-with-students-and-rury-in-background.html
+CC BY 4.0; 8-second excerpt beginning at 8 seconds, resized, audio removed.
+The source was captured at 25 fps; playback timing is preserved.
+
+bulbulflight.mp4 and bulbulflight.jpg: "Pycnonotus goiavier (yellow-vented
+bulbul)" by Joaquim Baeta
+https://scenoptica.com/footage/pycnonotus-goiavier.html
+CC BY 4.0; raw source clip 2, trimmed to 8 seconds, resized, audio removed.
+The source was captured at 23.976 fps; playback timing is preserved.
+
+umbrella.mp4 and umbrella.jpg: "Cats Play with an Umbrella" by Joaquim Baeta
+https://scenoptica.com/footage/cats-play-with-an-umbrella.html
+CC BY 4.0; raw source clip 2, trimmed to 7.96 seconds, resized, audio removed.
+The source was captured at 25 fps; playback timing is preserved.
+
+iisfood.mp4 and iisfood.jpg: "Iis Looking for Food" by Joaquim Baeta
+https://scenoptica.com/footage/iis-looking-for-food.html
+CC BY 4.0; raw source clip 1, trimmed to 8.5 seconds, resized, audio removed.
+The source was captured at 23.976 fps; playback timing is preserved.
+
+## Pinpoint city data
+
+GeoNames geographical database, https://www.geonames.org/, licensed under
+CC BY 4.0. The app uses the `cities5000` download and GeoNames `countryInfo.txt`;
+the imported snapshot is documented in `research/PINPOINT_CITIES.md`.
+
+Natural Earth 10m populated places are public domain:
+https://www.naturalearthdata.com/about/terms-of-use/.
